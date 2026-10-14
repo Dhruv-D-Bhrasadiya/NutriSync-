@@ -33,7 +33,7 @@ Use a temporary test branch and harmless reversible defect, such as a known disp
 ~~~groovy
 stage('Verify') {
   steps {
-    sh './mvnw -B clean verify'
+    sh 'mvn -B clean verify'
   }
   post {
     always {

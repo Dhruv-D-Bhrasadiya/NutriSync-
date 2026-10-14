@@ -40,7 +40,7 @@ Security uses Spring Security, BCrypt or equivalent, ownership checks, parameter
 | Security | Spring Security, session login |
 | Persistence | Spring Data JPA / Hibernate |
 | Database | PostgreSQL |
-| Build | Maven Wrapper |
+| Build | Maven installation |
 | Runtime | Executable JAR with embedded Tomcat |
 | Reverse proxy | Nginx |
 | UI tests | Selenium 4, JUnit 5 |
@@ -85,11 +85,11 @@ Use 201 for creation, 400 for invalid input, 401 unauthenticated, 403 unauthoriz
 ## Local setup
 1. Install JDK 17, Git and Docker.
 2. Clone repo and create a feature branch.
-3. Add Maven Wrapper, pom.xml, source and tests.
+3. Install Maven 3.9+; create pom.xml, source and tests.
 4. Start PostgreSQL locally or through a development Compose setup.
 5. Set SPRING_DATASOURCE_URL, SPRING_DATASOURCE_USERNAME and SPRING_DATASOURCE_PASSWORD outside Git.
-6. Run ./mvnw clean verify (Windows: mvnw.cmd clean verify).
-7. Start with ./mvnw spring-boot:run; use synthetic users and slots.
+6. Run mvn clean verify (Windows: mvn clean verify).
+7. Start with mvn spring-boot:run; use synthetic users and slots.
 8. Save actual output and screenshots in the evidence checklist.
 
 Lock remaining details during implementation: ID type, slot occupancy model, app port, slot-list access and demo timezone.
