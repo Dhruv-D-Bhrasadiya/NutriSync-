@@ -1,0 +1,57 @@
+name: Java CI
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+      - "docs/**"
+      - "feature/**"
+      - "bugfix/**"
+      - "ci/**"
+  pull_request:
+    branches:
+      - main
+      - develop
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Set up Java 17 with Maven cache
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: maven
+
+      - name: Run unit and integration tests
+        run: mvn -B clean verify
+
+      - name: Validate Compose configuration
+        env:
+          POSTGRES_PASSWORD: ci-only-temporary-password-not-for-deployment
+          POSTGRES_DB: nutrisync
+          POSTGRES_USER: nutrisync
+        run: docker compose config --quiet
+
+      - name: Build container image
+        run: docker build --pull -t nutrisync:ci .
+
+      - name: Upload test reports on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nutrisync-test-reports
+          path: |
+            target/surefire-reports/
+            target/failsafe-reports/
+          if-no-files-found: ignore

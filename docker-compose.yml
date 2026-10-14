@@ -41,7 +41,7 @@ services:
     restart: unless-stopped
 
   selenium:
-    image: selenium/standalone-chrome:4.25.0
+    image: selenium/standalone-chrome:4.51.0
     profiles: ["e2e"]
     shm_size: 2gb
     ports:
