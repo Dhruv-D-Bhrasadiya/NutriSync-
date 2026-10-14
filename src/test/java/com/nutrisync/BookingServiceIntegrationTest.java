@@ -47,8 +47,9 @@ class BookingServiceIntegrationTest {
     void staffRejectionReleasesFutureSlot() {
         Fixture fixture = fixture();
         Booking booking = bookingService.requestBooking(fixture.client, fixture.slot.getId());
-        bookingService.reject(fixture.nutritionist, booking.getId());
-        assertThat(booking.getStatus()).isEqualTo(BookingStatus.REJECTED);
+        Booking rejected = bookingService.reject(fixture.nutritionist, booking.getId());
+        assertThat(rejected.getStatus()).isEqualTo(BookingStatus.REJECTED);
+        assertThat(bookings.findById(booking.getId()).orElseThrow().getStatus()).isEqualTo(BookingStatus.REJECTED);
         assertThat(slots.findById(fixture.slot.getId()).orElseThrow().getStatus()).isEqualTo(SlotStatus.OPEN);
     }
 
