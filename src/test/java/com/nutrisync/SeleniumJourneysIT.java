@@ -27,7 +27,7 @@ class SeleniumJourneysIT {
     @RegisterExtension
     final TestWatcher screenshotOnFailure = new TestWatcher() {
         @Override
-        protected void testFailed(ExtensionContext context, Throwable cause) {
+        public void testFailed(ExtensionContext context, Throwable cause) {
             if (driver instanceof TakesScreenshot screenshotDriver) {
                 try {
                     Path directory = Path.of("target", "selenium-failures");
