@@ -1,4 +1,3 @@
-# Java/Maven build output
 target/
 out/
 build/
@@ -7,22 +6,21 @@ build/
 *.war
 *.ear
 *.nar
-
-# Runtime logs and JVM crash files
 *.log
 hs_err_pid*
 replay_pid*
 
-# Local configuration and secrets
 .env
 .env.*
 !.env.example
+ansible/inventory/dev.ini
+ansible/group_vars/app-secrets.yml
+ansible/vault-password.txt
 *.pem
 *.key
 secrets/
 credentials/
 
-# IDE and OS files
 .idea/
 .vscode/
 *.iml
@@ -32,7 +30,6 @@ credentials/
 .DS_Store
 Thumbs.db
 
-# Test artifacts (store only sanitized evidence intentionally)
 test-output/
 screenshots/
 selenium-failures/
