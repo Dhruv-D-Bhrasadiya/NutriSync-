@@ -32,18 +32,24 @@
   <profiles>
     <profile>
       <id>selenium-e2e</id>
-      <build><plugins>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId><artifactId>maven-failsafe-plugin</artifactId><version>3.5.2</version>
-          <configuration>
-            <useModulePath>false</useModulePath>
-            <systemPropertyVariables>
-              <e2e.enabled>${e2e.enabled}</e2e.enabled><e2e.baseUrl>${e2e.baseUrl}</e2e.baseUrl><e2e.remoteUrl>${e2e.remoteUrl}</e2e.remoteUrl>
-            </systemPropertyVariables>
-          </configuration>
-          <executions><execution><goals><goal>integration-test</goal><goal>verify</goal></executions></execution>
-        </plugin>
-      </plugins></build>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId><artifactId>maven-failsafe-plugin</artifactId><version>3.5.2</version>
+            <configuration>
+              <useModulePath>false</useModulePath>
+              <systemPropertyVariables>
+                <e2e.enabled>${e2e.enabled}</e2e.enabled>
+                <e2e.baseUrl>${e2e.baseUrl}</e2e.baseUrl>
+                <e2e.remoteUrl>${e2e.remoteUrl}</e2e.remoteUrl>
+              </systemPropertyVariables>
+            </configuration>
+            <executions>
+              <execution><goals><goal>integration-test</goal><goal>verify</goal></goals></execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
     </profile>
   </profiles>
 </project>

@@ -31,7 +31,7 @@ public class DemoDataInitializer {
         users.createDemoUserIfMissing("Demo Client", "client@nutrisync.local", "NutriSyncDemo!2026", Role.CLIENT);
         users.createDemoUserIfMissing("Demo Administrator", "admin@nutrisync.local", "NutriSyncAdmin!2026", Role.ADMIN);
         if (slots.count() > 0) return;
-        LocalDate firstDay = LocalDate.now(zone).plusDays(1);
+        LocalDate firstDay = LocalDate.now(zone).plusDays(2);
         for (int day = 0; day < 30; day++) {
             LocalDate date = firstDay.plusDays(day);
             if (date.getDayOfWeek() == DayOfWeek.SUNDAY) continue;

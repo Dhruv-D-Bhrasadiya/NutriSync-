@@ -1,0 +1,12 @@
+---
+app_user: nutrisync
+app_group: nutrisync
+app_dir: /opt/nutrisync
+app_port: 8080
+app_timezone: Asia/Kolkata
+nutrisync_image: "{{ lookup('ansible.builtin.env', 'NUTRISYNC_IMAGE') | default('nutrisync:0.1.0', true) }}"
+nutrisync_db_name: nutrisync
+nutrisync_db_user: nutrisync
+nutrisync_db_password: "{{ lookup('ansible.builtin.env', 'NUTRISYNC_DB_PASSWORD') }}"
+nutrisync_db_volume: nutrisync-postgres-data
+nutrisync_network: nutrisync-private

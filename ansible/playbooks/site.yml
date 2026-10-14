@@ -1,0 +1,203 @@
+---
+- name: Configure and deploy NutriSync on a disposable Ubuntu host
+  hosts: app
+  become: true
+  vars_files:
+    - ../group_vars/app.yml
+
+  pre_tasks:
+    - name: Require a supported Debian-family host
+      ansible.builtin.assert:
+        that:
+          - ansible_os_family == "Debian"
+          - ansible_distribution_version is version("22.04", ">=")
+        fail_msg: "This playbook currently targets Ubuntu 22.04 or newer."
+
+    - name: Require external deployment secrets and image
+      ansible.builtin.assert:
+        that:
+          - nutrisync_db_password | length >= 20
+          - nutrisync_image is string
+          - nutrisync_image | length > 4
+        fail_msg: "Set NUTRISYNC_DB_PASSWORD (20+ characters) and NUTRISYNC_IMAGE in the control-node environment."
+      no_log: true
+
+  tasks:
+    - name: Install runtime prerequisites
+      ansible.builtin.apt:
+        name:
+          - docker.io
+          - docker-compose-v2
+          - python3-docker
+          - nginx
+          - curl
+        state: present
+        update_cache: true
+        cache_valid_time: 3600
+
+    - name: Ensure Docker is enabled and running
+      ansible.builtin.service:
+        name: docker
+        state: started
+        enabled: true
+
+    - name: Create NutriSync system group
+      ansible.builtin.group:
+        name: "{{ app_group }}"
+        system: true
+        state: present
+
+    - name: Create NutriSync service user
+      ansible.builtin.user:
+        name: "{{ app_user }}"
+        group: "{{ app_group }}"
+        system: true
+        create_home: false
+        shell: /usr/sbin/nologin
+        state: present
+
+    - name: Create application directory
+      ansible.builtin.file:
+        path: "{{ app_dir }}"
+        state: directory
+        owner: "{{ app_user }}"
+        group: "{{ app_group }}"
+        mode: "0750"
+
+    - name: Create private container network
+      community.docker.docker_network:
+        name: "{{ nutrisync_network }}"
+        state: present
+
+    - name: Create persistent PostgreSQL volume
+      community.docker.docker_volume:
+        name: "{{ nutrisync_db_volume }}"
+        state: present
+
+    - name: Start PostgreSQL container
+      community.docker.docker_container:
+        name: nutrisync-db
+        image: postgres:16-alpine
+        pull: true
+        state: started
+        restart_policy: unless-stopped
+        env:
+          POSTGRES_DB: "{{ nutrisync_db_name }}"
+          POSTGRES_USER: "{{ nutrisync_db_user }}"
+          POSTGRES_PASSWORD: "{{ nutrisync_db_password }}"
+        networks:
+          - name: "{{ nutrisync_network }}"
+            aliases:
+              - nutrisync-db
+        mounts:
+          - source: "{{ nutrisync_db_volume }}"
+            target: /var/lib/postgresql/data
+            type: volume
+      no_log: true
+
+    - name: Wait for PostgreSQL readiness
+      ansible.builtin.command:
+        argv:
+          - docker
+          - exec
+          - nutrisync-db
+          - pg_isready
+          - -U
+          - "{{ nutrisync_db_user }}"
+          - -d
+          - "{{ nutrisync_db_name }}"
+      register: postgres_ready
+      changed_when: false
+      retries: 20
+      delay: 3
+      until: postgres_ready.rc == 0
+
+    - name: Start or update NutriSync application container
+      community.docker.docker_container:
+        name: nutrisync-app
+        image: "{{ nutrisync_image }}"
+        pull: true
+        state: started
+        restart_policy: unless-stopped
+        recreate: false
+        published_ports:
+          - "127.0.0.1:{{ app_port }}:8080"
+        env:
+          SPRING_DATASOURCE_URL: "jdbc:postgresql://nutrisync-db:5432/{{ nutrisync_db_name }}"
+          SPRING_DATASOURCE_USERNAME: "{{ nutrisync_db_user }}"
+          SPRING_DATASOURCE_PASSWORD: "{{ nutrisync_db_password }}"
+          APP_TIME_ZONE: "{{ app_timezone }}"
+          APP_SEED_DEMO_DATA: "false"
+          SERVER_PORT: "8080"
+        networks:
+          - name: "{{ nutrisync_network }}"
+            aliases:
+              - nutrisync-app
+      no_log: true
+
+    - name: Install Nginx reverse-proxy configuration
+      ansible.builtin.template:
+        src: ../templates/nutrisync.nginx.conf.j2
+        dest: /etc/nginx/sites-available/nutrisync.conf
+        owner: root
+        group: root
+        mode: "0644"
+      notify:
+        - Validate Nginx configuration
+        - Reload Nginx
+
+    - name: Enable NutriSync Nginx site
+      ansible.builtin.file:
+        src: /etc/nginx/sites-available/nutrisync.conf
+        dest: /etc/nginx/sites-enabled/nutrisync.conf
+        state: link
+        owner: root
+        group: root
+      notify:
+        - Validate Nginx configuration
+        - Reload Nginx
+
+    - name: Disable the default Nginx site
+      ansible.builtin.file:
+        path: /etc/nginx/sites-enabled/default
+        state: absent
+      notify:
+        - Validate Nginx configuration
+        - Reload Nginx
+
+    - name: Ensure Nginx is enabled and running
+      ansible.builtin.service:
+        name: nginx
+        state: started
+        enabled: true
+
+    - name: Wait for NutriSync health endpoint
+      ansible.builtin.uri:
+        url: "http://127.0.0.1:{{ app_port }}/actuator/health"
+        method: GET
+        status_code: 200
+        return_content: true
+      register: nutrisync_health
+      retries: 24
+      delay: 5
+      until: nutrisync_health.status == 200
+
+    - name: Check Nginx reverse proxy response
+      ansible.builtin.uri:
+        url: http://127.0.0.1/actuator/health
+        method: GET
+        status_code: 200
+      register: nginx_health
+      retries: 12
+      delay: 3
+      until: nginx_health.status == 200
+
+  handlers:
+    - name: Validate Nginx configuration
+      ansible.builtin.command: nginx -t
+      changed_when: false
+
+    - name: Reload Nginx
+      ansible.builtin.service:
+        name: nginx
+        state: reloaded
