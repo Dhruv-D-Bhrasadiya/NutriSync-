@@ -42,7 +42,9 @@ public class SlotService {
         if (end.isAfter(start.plusSeconds(4 * 60 * 60))) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "A consultation slot cannot exceed four hours.");
         }
-        AppUser owner = users.findById(actor.getId())
+        // Lock the owning user row so concurrent slot-creation transactions serialize
+        // before checking for overlapping intervals.
+        AppUser owner = users.findLockedById(actor.getId())
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Nutritionist account not found."));
         if (slots.hasOverlappingSlot(owner.getId(), start, end)) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "This availability overlaps an existing slot.");
