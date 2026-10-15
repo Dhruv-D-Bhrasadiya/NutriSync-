@@ -44,6 +44,9 @@ pipeline {
                     if (configuredPort < 1024 || configuredPort > 65535) {
                         error('APP_HOST_PORT must be between 1024 and 65535.')
                     }
+                    if (params.RUN_SELENIUM && configuredPort == 18080) {
+                        error('APP_HOST_PORT 18080 is reserved for the isolated Selenium stack when RUN_SELENIUM is enabled.')
+                    }
                 }
             }
         }
@@ -79,7 +82,7 @@ pipeline {
                         "SPRING_PROFILES_ACTIVE=demo",
                         "APP_SEED_DEMO_DATA=true",
                         "APP_BOOTSTRAP_STAFF_ENABLED=false",
-                        "APP_HOST_PORT=8080",
+                        "APP_HOST_PORT=18080",
                         "COMPOSE_PROJECT_NAME=nutrisync-ci-${env.BUILD_NUMBER}"
                     ]) {
                         sh 'docker compose --profile e2e up -d --build --wait'
@@ -127,7 +130,7 @@ pipeline {
                         "SPRING_PROFILES_ACTIVE=demo",
                         "APP_SEED_DEMO_DATA=true",
                         "APP_BOOTSTRAP_STAFF_ENABLED=false",
-                        "APP_HOST_PORT=8080",
+                        "APP_HOST_PORT=18080",
                         "COMPOSE_PROJECT_NAME=nutrisync-ci-${env.BUILD_NUMBER}"
                     ]) {
                         sh 'docker compose --profile e2e down --volumes --remove-orphans || true'
@@ -195,6 +198,7 @@ pipeline {
                         "POSTGRES_PASSWORD=ci-only-${env.BUILD_NUMBER}-temporary",
                         "POSTGRES_DB=nutrisync",
                         "POSTGRES_USER=nutrisync",
+                        "APP_HOST_PORT=18080",
                         "COMPOSE_PROJECT_NAME=nutrisync-ci-${env.BUILD_NUMBER}"
                     ]) {
                         sh 'docker compose --profile e2e down --volumes --remove-orphans || true'
