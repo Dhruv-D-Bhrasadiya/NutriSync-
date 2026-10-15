@@ -99,7 +99,7 @@ mvn -B clean test
 mvn -B clean verify
 ~~~
 
-Reports: `target/surefire-reports/`. Tests cover password hashing, duplicate-email registration, booking creation, duplicate slot-claim rejection and slot release after a staff rejection.
+Reports: `target/surefire-reports/`. Tests cover password hashing, duplicate-email registration, booking creation, duplicate slot-claim rejection, slot release after staff rejection, API response serialization, booking lifecycle and ownership checks. The GitHub Actions workflow also starts an isolated PostgreSQL + app + Selenium Chrome Compose stack and runs the five browser journeys on each qualifying push/PR.
 
 ## 4. Run Selenium journeys
 
@@ -156,7 +156,7 @@ Staff can use `PATCH /api/v1/bookings/{id}/confirm`, `/reject` and `/cancel`. St
 
 ## 6. Jenkins CI/CD
 
-The root `Jenkinsfile` checks out source, runs Maven verification, builds a Docker image, optionally runs Selenium, optionally publishes to Docker Hub, then deploys from main. Use a **Multibranch Pipeline** job so branch-specific stages and PR builds receive the correct `BRANCH_NAME`.
+The root `Jenkinsfile` checks out source, runs Maven verification, builds a Docker image, optionally runs Selenium, optionally publishes to Docker Hub, then deploys from main. Use a **Multibranch Pipeline** job so branch-specific stages and PR builds receive the correct `BRANCH_NAME`. The Selenium stack uses a build-specific Compose project and removes its temporary database volume on cleanup; the persistent `nutrisync` deployment stack is kept separate.
 
 Configure Jenkins Global Tools with JDK name `JDK17` (JDK 17) and Maven name `Maven_3_9` (Maven 3.9+). Docker and Compose must be usable by the build agent.
 
