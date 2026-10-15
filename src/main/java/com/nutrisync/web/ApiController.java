@@ -1,6 +1,7 @@
 package com.nutrisync.web;
 
 import com.nutrisync.domain.AppUser;
+import com.nutrisync.domain.Booking;
 import com.nutrisync.service.BookingService;
 import com.nutrisync.service.SlotService;
 import com.nutrisync.service.UserService;
