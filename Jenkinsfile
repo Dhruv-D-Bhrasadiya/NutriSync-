@@ -130,7 +130,7 @@ pipeline {
                         "APP_HOST_PORT=8080",
                         "COMPOSE_PROJECT_NAME=nutrisync-ci-${env.BUILD_NUMBER}"
                     ]) {
-                        sh 'docker compose --profile e2e down --remove-orphans || true'
+                        sh 'docker compose --profile e2e down --volumes --remove-orphans || true'
                     }
 
                     def deploymentCredentials = [
@@ -197,7 +197,7 @@ pipeline {
                         "POSTGRES_USER=nutrisync",
                         "COMPOSE_PROJECT_NAME=nutrisync-ci-${env.BUILD_NUMBER}"
                     ]) {
-                        sh 'docker compose --profile e2e down --remove-orphans || true'
+                        sh 'docker compose --profile e2e down --volumes --remove-orphans || true'
                     }
                 }
             }
