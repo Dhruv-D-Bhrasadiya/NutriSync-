@@ -62,31 +62,46 @@ To also delete all local DB data and demo bookings, run `docker compose down -v`
 
 ## 2. Run with Maven (without the app container)
 
-Start PostgreSQL, create a database and user, then set the datasource values.
+This uses the Compose PostgreSQL service and runs Spring Boot directly on your host. First create .env as described in Quick start and set a unique POSTGRES_PASSWORD; then start only the database:
 
-Linux/macOS:
+~~~bash
+docker compose up -d db
+docker compose ps db
+~~~
+
+Linux/macOS (from the repository root):
 ~~~bash
 export SPRING_DATASOURCE_URL='jdbc:postgresql://localhost:5432/nutrisync'
 export SPRING_DATASOURCE_USERNAME='nutrisync'
-export SPRING_DATASOURCE_PASSWORD='your-local-database-password'
+# Use the same local-only password configured as POSTGRES_PASSWORD in .env.
+read -s -p 'Local PostgreSQL password: ' SPRING_DATASOURCE_PASSWORD
+echo
+export SPRING_DATASOURCE_PASSWORD
 export APP_TIME_ZONE='Asia/Kolkata'
-# Local-only demo users/slots for a private development database:
+# Optional: seed demo accounts/slots on a private development DB only.
 export SPRING_PROFILES_ACTIVE=demo
 export APP_SEED_DEMO_DATA=true
 mvn spring-boot:run
+# When finished, clear the secret from this shell.
+unset SPRING_DATASOURCE_PASSWORD
 ~~~
 
-PowerShell:
+PowerShell (replace the value with the same password from your local .env):
 ~~~powershell
+docker compose up -d db
 $env:SPRING_DATASOURCE_URL = 'jdbc:postgresql://localhost:5432/nutrisync'
 $env:SPRING_DATASOURCE_USERNAME = 'nutrisync'
-$env:SPRING_DATASOURCE_PASSWORD = 'your-local-database-password'
+$env:SPRING_DATASOURCE_PASSWORD = Read-Host 'Local PostgreSQL password' -AsSecureString | ConvertFrom-SecureString -AsPlainText
 $env:APP_TIME_ZONE = 'Asia/Kolkata'
-# Enable only for a private development database:
+# Optional and private/local only:
 $env:SPRING_PROFILES_ACTIVE = 'demo'
 $env:APP_SEED_DEMO_DATA = 'true'
 mvn spring-boot:run
+# Remove it from the shell session afterward.
+Remove-Item Env:SPRING_DATASOURCE_PASSWORD
 ~~~
+
+To stop the database container without deleting its data, run `docker compose stop db`. To remove the container while preserving its volume, run `docker compose down`. Do not use `docker compose down -v` unless you intentionally want to delete the local database volume.
 
 Demo accounts and sample slots are seeded only when `SPRING_PROFILES_ACTIVE=demo` and `APP_SEED_DEMO_DATA=true`. The default runtime configuration does not create fixed credentials. Use those settings only on a private/local learning environment and disable them for an internet-facing deployment.
 
