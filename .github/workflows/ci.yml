@@ -21,7 +21,7 @@ permissions:
 jobs:
   verify:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
     steps:
       - name: Check out source
         uses: actions/checkout@v4
@@ -45,6 +45,40 @@ jobs:
 
       - name: Build container image
         run: docker build --pull -t nutrisync:ci .
+
+      - name: Start isolated stack for Selenium journeys
+        env:
+          POSTGRES_PASSWORD: ci-only-temporary-password-not-for-deployment
+          POSTGRES_DB: nutrisync
+          POSTGRES_USER: nutrisync
+          APP_HOST_PORT: "18080"
+          SPRING_PROFILES_ACTIVE: demo
+          APP_SEED_DEMO_DATA: "true"
+          APP_BOOTSTRAP_STAFF_ENABLED: "false"
+          COMPOSE_PROJECT_NAME: nutrisync-e2e
+        run: docker compose --profile e2e up -d --build --wait
+
+      - name: Run Selenium end-to-end journeys
+        env:
+          POSTGRES_PASSWORD: ci-only-temporary-password-not-for-deployment
+          POSTGRES_DB: nutrisync
+          POSTGRES_USER: nutrisync
+          APP_HOST_PORT: "18080"
+          SPRING_PROFILES_ACTIVE: demo
+          APP_SEED_DEMO_DATA: "true"
+          APP_BOOTSTRAP_STAFF_ENABLED: "false"
+          COMPOSE_PROJECT_NAME: nutrisync-e2e
+        run: mvn -B -Pselenium-e2e verify -De2e.enabled=true -De2e.baseUrl=http://app:8080 -De2e.remoteUrl=http://localhost:4444
+
+      - name: Tear down isolated Selenium stack
+        if: always()
+        env:
+          POSTGRES_PASSWORD: ci-only-temporary-password-not-for-deployment
+          POSTGRES_DB: nutrisync
+          POSTGRES_USER: nutrisync
+          APP_HOST_PORT: "18080"
+          COMPOSE_PROJECT_NAME: nutrisync-e2e
+        run: docker compose --profile e2e down --volumes --remove-orphans
 
       - name: Upload test reports on failure
         if: failure()
