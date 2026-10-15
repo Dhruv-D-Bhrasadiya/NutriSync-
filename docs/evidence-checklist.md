@@ -4,7 +4,7 @@ This checklist distinguishes committed implementation from work that must still 
 
 ## Task 1 — problem and MVP
 - [x] Problem, stakeholder list, constraints and 15-item product scope documented.
-- [ ] Validate pain points with users or explicitly record that interviews were not conducted.
+- [ ] Validate pain points with users, or record explicitly that no interviews were conducted.
 - Evidence: [Problem statement](01-problem-definition-and-mvp.md)
 
 ## Task 2 — Agile planning and DevOps workflow
