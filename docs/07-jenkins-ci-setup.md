@@ -16,7 +16,7 @@ Use a local Linux VM, WSL2-based Linux environment or disposable Ubuntu VM. Keep
 Never paste passwords or tokens into repository docs/screenshots.
 
 ## Configure tools
-Prefer Maven installation so the Maven version is pinned by the project. Ensure the agent can run Git and download dependencies. On Linux, the wrapper must be executable; on Windows, use mvn. Configure JDK/tool paths where needed.
+Configure a Maven 3.9+ installation in Jenkins Global Tools (for example, name it `Maven_3_9`) and select JDK 17 (for example, `JDK17`). Ensure the agent can run Git and download dependencies. This repository uses the configured `mvn` command; it does not currently commit Maven Wrapper scripts.
 
 ## Create the CI job
 Create a Pipeline job named nutrisync-ci:
@@ -46,7 +46,7 @@ Capture actual job URL/build number, repo/branch config, webhook delivery or pol
 
 ## Troubleshooting
 - Missing tools: check java -version and mvn -version on the agent.
-- Wrapper permission denied: commit executable mode for mvnw.
+- Maven not found: confirm the selected Jenkins Maven tool is named exactly as referenced by the Jenkinsfile and is installed on that agent.
 - Download failure: verify network/proxy and Maven access.
 - No tests found: check test path, naming, dependencies and report path.
 - Webhook absent: inspect GitHub delivery history, endpoint, plugin and trigger settings.
