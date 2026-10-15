@@ -22,6 +22,15 @@
         fail_msg: "Set NUTRISYNC_DB_PASSWORD (20+ characters) and NUTRISYNC_IMAGE in the control-node environment."
       no_log: true
 
+    - name: Validate optional bootstrap staff settings
+      ansible.builtin.assert:
+        that:
+          - "(not (nutrisync_bootstrap_staff_enabled | bool)) or (nutrisync_bootstrap_staff_name | length >= 2)"
+          - "(not (nutrisync_bootstrap_staff_enabled | bool)) or ('@' in nutrisync_bootstrap_staff_email and '.' in nutrisync_bootstrap_staff_email.split('@')[-1])"
+          - "(not (nutrisync_bootstrap_staff_enabled | bool)) or (nutrisync_bootstrap_staff_password | length >= 20 and nutrisync_bootstrap_staff_password | length <= 72)"
+        fail_msg: "When enabled, set a staff name/email and a 20–72 character NUTRISYNC_BOOTSTRAP_STAFF_PASSWORD."
+      no_log: true
+
   tasks:
     - name: Install runtime prerequisites
       ansible.builtin.apt:
@@ -128,6 +137,11 @@
           SPRING_DATASOURCE_PASSWORD: "{{ nutrisync_db_password }}"
           APP_TIME_ZONE: "{{ app_timezone }}"
           APP_SEED_DEMO_DATA: "false"
+          APP_BOOTSTRAP_STAFF_ENABLED: "{{ nutrisync_bootstrap_staff_enabled | string }}"
+          APP_BOOTSTRAP_STAFF_NAME: "{{ nutrisync_bootstrap_staff_name }}"
+          APP_BOOTSTRAP_STAFF_EMAIL: "{{ nutrisync_bootstrap_staff_email }}"
+          APP_BOOTSTRAP_STAFF_PASSWORD: "{{ nutrisync_bootstrap_staff_password }}"
+          SERVER_ADDRESS: "0.0.0.0"
           SERVER_PORT: "8080"
         networks:
           - name: "{{ nutrisync_network }}"
