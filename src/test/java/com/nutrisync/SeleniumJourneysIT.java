@@ -104,6 +104,8 @@ class SeleniumJourneysIT {
         String bookingId = row.getAttribute("data-booking-id");
         wait.until(ExpectedConditions.elementToBeClickable(By.id("cancel-booking-" + bookingId)));
         driver.findElement(By.id("cancel-booking-" + bookingId)).click();
+        // The UI intentionally asks for confirmation before cancelling.
+        driver.switchTo().alert().accept();
         wait.until(ExpectedConditions.urlContains("/bookings"));
         assertThat(driver.findElement(By.id("booking-row-" + bookingId)).getText()).contains("CANCELLED");
     }
