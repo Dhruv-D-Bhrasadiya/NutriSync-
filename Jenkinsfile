@@ -86,7 +86,7 @@ pipeline {
                         "COMPOSE_PROJECT_NAME=nutrisync-ci-${env.BUILD_NUMBER}"
                     ]) {
                         sh 'docker compose --profile e2e up -d --build --wait'
-                        sh 'mvn -B -Pselenium-e2e verify -De2e.enabled=true -De2e.baseUrl=http://app:8080 -De2e.remoteUrl=http://localhost:4444'
+                        sh 'mvn -B -Pselenium-e2e verify -De2e.enabled=true -De2e.baseUrl=http://nutrisync-web:8080 -De2e.remoteUrl=http://localhost:4444'
                     }
                 }
             }
