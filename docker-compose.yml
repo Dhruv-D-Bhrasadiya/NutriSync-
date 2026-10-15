@@ -37,6 +37,12 @@ services:
     depends_on:
       db:
         condition: service_healthy
+    networks:
+      default:
+        aliases:
+          # Use a hostname that does not end in the special .app TLD; modern browsers
+          # may automatically upgrade plain HTTP navigation to HTTPS for "app".
+          - nutrisync-web
     healthcheck:
       test: ["CMD", "curl", "-fsS", "http://127.0.0.1:8080/actuator/health"]
       interval: 15s
