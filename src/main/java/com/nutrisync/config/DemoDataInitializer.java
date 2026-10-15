@@ -27,9 +27,9 @@ public class DemoDataInitializer {
 
     @PostConstruct
     public void seedDemoData() {
-        AppUser nutritionist = users.createDemoUserIfMissing("Demo Nutritionist", "nutritionist@nutrisync.local", "NutriSyncDemo!2026", Role.NUTRITIONIST);
-        users.createDemoUserIfMissing("Demo Client", "client@nutrisync.local", "NutriSyncDemo!2026", Role.CLIENT);
-        users.createDemoUserIfMissing("Demo Administrator", "admin@nutrisync.local", "NutriSyncAdmin!2026", Role.ADMIN);
+        AppUser nutritionist = users.createUserIfMissing("Demo Nutritionist", "nutritionist@nutrisync.local", "NutriSyncDemo!2026", Role.NUTRITIONIST);
+        users.createUserIfMissing("Demo Client", "client@nutrisync.local", "NutriSyncDemo!2026", Role.CLIENT);
+        users.createUserIfMissing("Demo Administrator", "admin@nutrisync.local", "NutriSyncAdmin!2026", Role.ADMIN);
         if (slots.count() > 0) return;
         LocalDate firstDay = LocalDate.now(zone).plusDays(2);
         for (int day = 0; day < 30; day++) {
