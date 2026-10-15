@@ -35,6 +35,11 @@ management:
 app:
   time-zone: ${APP_TIME_ZONE:Asia/Kolkata}
   seed-demo-data: ${APP_SEED_DEMO_DATA:false}
+  bootstrap-staff:
+    enabled: ${APP_BOOTSTRAP_STAFF_ENABLED:false}
+    name: ${APP_BOOTSTRAP_STAFF_NAME:}
+    email: ${APP_BOOTSTRAP_STAFF_EMAIL:}
+    password: ${APP_BOOTSTRAP_STAFF_PASSWORD:}
 logging:
   level:
     org.springframework.security: WARN
