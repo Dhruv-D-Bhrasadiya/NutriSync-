@@ -160,7 +160,7 @@ The root `Jenkinsfile` checks out source, runs Maven verification, builds a Dock
 
 Configure Jenkins Global Tools with JDK name `JDK17` (JDK 17) and Maven name `Maven_3_9` (Maven 3.9+). Docker and Compose must be usable by the build agent.
 
-For deployments on main, add a **Secret text** credential with ID `nutrisync-postgres-password` for the persistent Compose DB. For image publishing, add a username/password credential with ID `nutrisync-dockerhub`, using a Docker Hub access token as the password. Leave `PUSH_IMAGE` off until credentials and registry repository are configured. Local Compose deployment demonstrates the flow but is not production hardening.
+For deployments on main, configure these Jenkins **Secret text** credentials: `nutrisync-postgres-password` (persistent database password), `nutrisync-bootstrap-staff-name`, `nutrisync-bootstrap-staff-email`, and `nutrisync-bootstrap-staff-password` (initial nutritionist account; use a 20–72 character unique password). The main deployment runs the `prod` profile with demo seeding disabled and uses the opt-in staff bootstrap only when the account is absent. The bootstrap does not reset an existing password. For image publishing, add a username/password credential with ID `nutrisync-dockerhub`, using a Docker Hub access token as the password. Set `PUSH_IMAGE` only after registry credentials/repository are configured. `APP_HOST_PORT` is parameterized (1024–65535) and bound to loopback; this Jenkinsfile deploys on the Jenkins agent's Docker host, not a remote production server. Use the Ansible playbook for a separate target host. This is a learning setup, not production hardening.
 
 ## 7. Ansible provisioning
 
