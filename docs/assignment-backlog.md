@@ -37,3 +37,7 @@ This is the canonical tracker for the 14-task DevOps assignment and the 15-item 
 - Open issue means acceptance is not fully signed off; do not infer that code does not exist.
 - Do not mark Jenkins, remote host provisioning, registry push, manual interviews or release-tag checks complete without real evidence.
 - Use synthetic test data only; do not put passwords, personal health information, or private host data in evidence.
+
+
+## Backlog hygiene
+The original product issues (#3–#17) are the canonical P01–P15 tracker. Some exploratory duplicate issues were closed as duplicates during cleanup; use the links above plus open operational issues #29–#33 and do not reopen the duplicates unless they need a distinct scope.
