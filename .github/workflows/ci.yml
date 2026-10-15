@@ -90,12 +90,14 @@ jobs:
           COMPOSE_PROJECT_NAME: nutrisync-e2e
         run: docker compose --profile e2e down --volumes --remove-orphans
 
-      - name: Upload test reports on failure
-        if: failure()
+      - name: Upload test reports and Selenium failure screenshots
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: nutrisync-test-reports
           path: |
             target/surefire-reports/
             target/failsafe-reports/
-          if-no-files-found: ignore
+            target/selenium-failures/
+          if-no-files-found: warn
+          retention-days: 14

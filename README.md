@@ -23,9 +23,6 @@ NutriSync is a Java web application for requesting and managing nutrition consul
 ~~~bash
 git clone https://github.com/Dhruv-D-Bhrasadiya/NutriSync-.git
 cd NutriSync-
-# Only needed until the implementation PR is merged into main:
-git switch --track origin/feature/complete-nutrisync-mvp
-# Once merged, stay on main and skip the branch-switch command.
 cp .env.example .env
 ~~~
 
@@ -115,7 +112,7 @@ mvn -B clean test
 mvn -B clean verify
 ~~~
 
-Reports: `target/surefire-reports/`. Tests cover password hashing, duplicate-email registration, booking creation, duplicate slot-claim rejection, slot release after staff rejection, API response serialization, booking lifecycle and ownership checks. The GitHub Actions workflow also starts an isolated PostgreSQL + app + Selenium Chrome Compose stack and runs the five browser journeys on each qualifying push/PR.
+Reports: `target/surefire-reports/`. Tests cover password hashing, duplicate-email registration, booking creation, duplicate slot-claim rejection, slot release after staff rejection, API response serialization, booking lifecycle and ownership checks. The GitHub Actions workflow also starts an isolated PostgreSQL + app + Selenium Chrome Compose stack and runs the five browser journeys on each qualifying push/PR. It archives Maven Surefire/Failsafe reports and any Selenium failure screenshots as workflow artifacts.
 
 ## 4. Run Selenium journeys
 
