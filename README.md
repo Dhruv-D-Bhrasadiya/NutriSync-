@@ -91,7 +91,8 @@ PowerShell (replace the value with the same password from your local .env):
 docker compose up -d db
 $env:SPRING_DATASOURCE_URL = 'jdbc:postgresql://localhost:5432/nutrisync'
 $env:SPRING_DATASOURCE_USERNAME = 'nutrisync'
-$env:SPRING_DATASOURCE_PASSWORD = Read-Host 'Local PostgreSQL password' -AsSecureString | ConvertFrom-SecureString -AsPlainText
+$securePassword = Read-Host 'Local PostgreSQL password' -AsSecureString
+$env:SPRING_DATASOURCE_PASSWORD = [System.Net.NetworkCredential]::new('', $securePassword).Password
 $env:APP_TIME_ZONE = 'Asia/Kolkata'
 # Optional and private/local only:
 $env:SPRING_PROFILES_ACTIVE = 'demo'
