@@ -173,6 +173,20 @@ cp ansible/inventory/dev.example.ini ansible/inventory/dev.ini
 
 Edit the ignored `dev.ini` for a disposable Ubuntu 22.04+ host. Export `NUTRISYNC_IMAGE` as an image reference the host can pull and `NUTRISYNC_DB_PASSWORD` as a unique 20+ character secret on the control node. Do not commit or print these values.
 
+The Ansible target disables demo accounts. To create the initial nutritionist account, enable the opt-in bootstrap and pass a dedicated account through protected environment variables (recommended only during first provisioning or while resetting a disposable environment):
+
+~~~bash
+export NUTRISYNC_BOOTSTRAP_STAFF_ENABLED=true
+export NUTRISYNC_BOOTSTRAP_STAFF_NAME='Nutritionist'
+export NUTRISYNC_BOOTSTRAP_STAFF_EMAIL='nutritionist@your-demo-domain.example'
+read -s -p 'Initial staff password (20–72 characters): ' NUTRISYNC_BOOTSTRAP_STAFF_PASSWORD
+echo
+# Apply the playbook below. The bootstrap runs only if the account is absent.
+# It never resets an existing account's password; clear shell variables after provisioning.
+~~~
+
+Use a real email under a domain you control for a real environment. Keep these values in a secrets manager or a short-lived shell session, do not add them to inventory or group_vars, and do not enable the bootstrap in an internet-facing environment unless the onboarding procedure has been reviewed. The bootstrap flag defaults to false.
+
 ~~~bash
 ansible -i ansible/inventory/dev.ini app -m ping
 ansible-playbook -i ansible/inventory/dev.ini ansible/playbooks/site.yml --syntax-check
