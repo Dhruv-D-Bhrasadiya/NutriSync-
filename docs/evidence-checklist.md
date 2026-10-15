@@ -21,7 +21,8 @@ Replace TBD with real PR/build URLs, commit SHAs, screenshots or reports. Mark c
 
 ## Task 4 — GitHub setup
 - [x] README, issue templates, PR template and branch policy added.
-- [ ] Maven/application skeleton and product issue backlog created.
+- [x] Maven application skeleton, server-rendered UI, JSON API, database-backed service tests, Docker/Compose, Jenkinsfile, GitHub Actions CI and Ansible playbook committed.
+- [ ] Product issue backlog created and populated in GitHub.
 - Evidence: TBD
 
 ## Task 5 — collaboration
