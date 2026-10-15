@@ -49,7 +49,10 @@ public class ApiController {
     @PostMapping("/bookings")
     @ResponseStatus(HttpStatus.CREATED)
     public BookingResponse requestBooking(@AuthenticationPrincipal AppUser actor, @Valid @RequestBody BookingRequest request) {
-        return BookingResponse.from(bookings.requestBooking(actor, request.slotId()));
+        Booking created = bookings.requestBooking(actor, request.slotId());
+        // Re-read through the fetch-join query so DTO mapping never touches lazy proxies
+        // after the service transaction has closed.
+        return BookingResponse.from(bookings.bookingForViewer(actor, created.getId()));
     }
 
     @GetMapping("/bookings/mine")
@@ -64,16 +67,19 @@ public class ApiController {
 
     @PatchMapping("/bookings/{bookingId}/confirm")
     public BookingResponse confirm(@AuthenticationPrincipal AppUser actor, @PathVariable Long bookingId) {
-        return BookingResponse.from(bookings.confirm(actor, bookingId));
+        bookings.confirm(actor, bookingId);
+        return BookingResponse.from(bookings.bookingForViewer(actor, bookingId));
     }
 
     @PatchMapping("/bookings/{bookingId}/reject")
     public BookingResponse reject(@AuthenticationPrincipal AppUser actor, @PathVariable Long bookingId) {
-        return BookingResponse.from(bookings.reject(actor, bookingId));
+        bookings.reject(actor, bookingId);
+        return BookingResponse.from(bookings.bookingForViewer(actor, bookingId));
     }
 
     @PatchMapping("/bookings/{bookingId}/cancel")
     public BookingResponse cancel(@AuthenticationPrincipal AppUser actor, @PathVariable Long bookingId) {
-        return BookingResponse.from(bookings.cancel(actor, bookingId));
+        bookings.cancel(actor, bookingId);
+        return BookingResponse.from(bookings.bookingForViewer(actor, bookingId));
     }
 }
