@@ -106,7 +106,7 @@ Reports: `target/surefire-reports/`. Tests cover password hashing, duplicate-ema
 Start Compose including its optional Selenium Chrome service:
 
 ~~~bash
-docker compose --profile e2e up --build -d
+docker compose --profile e2e up --build -d --wait
 docker compose --profile e2e ps
 ~~~
 
