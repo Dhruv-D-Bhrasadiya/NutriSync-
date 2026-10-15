@@ -23,8 +23,9 @@ NutriSync is a Java web application for requesting and managing nutrition consul
 ~~~bash
 git clone https://github.com/Dhruv-D-Bhrasadiya/NutriSync-.git
 cd NutriSync-
-# Until the coding changes are merged into main:
-git switch docs/devops-documentation-baseline
+# If the implementation PR has not merged into main yet:
+git switch feature/complete-nutrisync-mvp
+# After the PR is merged, the default main branch is sufficient.
 cp .env.example .env
 ~~~
 
@@ -48,7 +49,7 @@ Health endpoint: http://localhost:8080/actuator/health
 | Nutritionist | `nutritionist@nutrisync.local` | `NutriSyncDemo!2026` |
 | Administrator | `admin@nutrisync.local` | `NutriSyncAdmin!2026` |
 
-These known credentials are seeded only by the Compose demo profile. Do not use them in a public deployment.
+These known credentials are seeded only when both the `demo` profile and `APP_SEED_DEMO_DATA=true` are enabled. Compose enables them for this local learning stack. Do not use them in a public deployment.
 
 ### Stop/reset
 
@@ -69,6 +70,9 @@ export SPRING_DATASOURCE_URL='jdbc:postgresql://localhost:5432/nutrisync'
 export SPRING_DATASOURCE_USERNAME='nutrisync'
 export SPRING_DATASOURCE_PASSWORD='your-local-database-password'
 export APP_TIME_ZONE='Asia/Kolkata'
+# Local-only demo users/slots for a private development database:
+export SPRING_PROFILES_ACTIVE=demo
+export APP_SEED_DEMO_DATA=true
 mvn spring-boot:run
 ~~~
 
@@ -78,10 +82,13 @@ $env:SPRING_DATASOURCE_URL = 'jdbc:postgresql://localhost:5432/nutrisync'
 $env:SPRING_DATASOURCE_USERNAME = 'nutrisync'
 $env:SPRING_DATASOURCE_PASSWORD = 'your-local-database-password'
 $env:APP_TIME_ZONE = 'Asia/Kolkata'
+# Enable only for a private development database:
+$env:SPRING_PROFILES_ACTIVE = 'demo'
+$env:APP_SEED_DEMO_DATA = 'true'
 mvn spring-boot:run
 ~~~
 
-Demo accounts are seeded only when `SPRING_PROFILES_ACTIVE=demo` and `APP_SEED_DEMO_DATA=true`. The default runtime profile does not create fixed credentials.
+Demo accounts and sample slots are seeded only when `SPRING_PROFILES_ACTIVE=demo` and `APP_SEED_DEMO_DATA=true`. The default runtime configuration does not create fixed credentials. Use those settings only on a private/local learning environment and disable them for an internet-facing deployment.
 
 ## 3. Run automated tests
 
