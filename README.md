@@ -23,9 +23,9 @@ NutriSync is a Java web application for requesting and managing nutrition consul
 ~~~bash
 git clone https://github.com/Dhruv-D-Bhrasadiya/NutriSync-.git
 cd NutriSync-
-# If the implementation PR has not merged into main yet:
-git switch feature/complete-nutrisync-mvp
-# After the PR is merged, the default main branch is sufficient.
+# Only needed until the implementation PR is merged into main:
+git switch --track origin/feature/complete-nutrisync-mvp
+# Once merged, stay on main and skip the branch-switch command.
 cp .env.example .env
 ~~~
 
