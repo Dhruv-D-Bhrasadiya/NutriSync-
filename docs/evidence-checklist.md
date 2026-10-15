@@ -9,7 +9,8 @@ This checklist distinguishes committed implementation from work that must still 
 
 ## Task 2 — Agile planning and DevOps workflow
 - [x] User stories, acceptance criteria, sprint plan, Definition of Done and Mermaid workflows documented.
-- [ ] Create/populate a GitHub Issues backlog and Project board.
+- [x] Create a GitHub Issues backlog for MVP items P01–P15 and the environment-dependent assignment tasks; backlog tracking issue: [#33](https://github.com/Dhruv-D-Bhrasadiya/NutriSync-/issues/33).
+- [ ] Create/populate a GitHub Project board (not verifiable with the connected repository file/issue tools).
 - Evidence: [Agile plan](02-agile-plan-and-devops-workflow.md)
 
 ## Task 3 — requirements, architecture and local setup
@@ -20,7 +21,8 @@ This checklist distinguishes committed implementation from work that must still 
 ## Task 4 — GitHub repository setup
 - [x] README, .gitignore, issue templates, PR template and branch policy committed.
 - [x] Java/Maven application, tests, Docker/Compose, Jenkinsfile, GitHub Actions and Ansible playbook committed.
-- [ ] Create/populate the product backlog in GitHub Issues.
+- [x] Create/populate GitHub Issues for P01–P15 and DevOps/evidence follow-up tasks; see [#33](https://github.com/Dhruv-D-Bhrasadiya/NutriSync-/issues/33).
+- [ ] Populate a GitHub Project board (requires Projects access not available through the current connector actions).
 - Evidence: [Implementation PR #2](https://github.com/Dhruv-D-Bhrasadiya/NutriSync-/pull/2)
 
 ## Task 5 — feature branch and PR collaboration
@@ -52,9 +54,9 @@ This checklist distinguishes committed implementation from work that must still 
 ## Task 9 — Selenium test design and local/CI execution
 - [x] Five browser journeys with assertions and synthetic data isolation implemented.
 - [x] The Selenium suite passed in the linked CI run.
-- [x] CI artifact upload is configured for Surefire/Failsafe reports and failure screenshots; verify the artifact on the latest successful main run.
+- [x] CI artifact upload is configured and a downloadable report artifact was verified on the latest successful main run: [run #38706341153](https://github.com/Dhruv-D-Bhrasadiya/NutriSync-/actions/runs/38706341153) (artifact ID `11959435410`, expires 2026-10-29).
 - [ ] Save a local test report/screenshot set for the assignment submission.
-- Evidence: [Successful CI run](https://github.com/Dhruv-D-Bhrasadiya/NutriSync-/actions/runs/38679031958)
+- Evidence: [Latest successful main CI run](https://github.com/Dhruv-D-Bhrasadiya/NutriSync-/actions/runs/38706341153)
 
 ## Task 10 — continuous testing in Jenkins
 - [x] Jenkinsfile places Selenium verification before deployment, so failed tests cannot reach the deploy stage.
@@ -95,7 +97,7 @@ This checklist distinguishes committed implementation from work that must still 
 ## Final review
 - [x] README links point to the committed documentation and project files.
 - [x] No real credentials, private keys, .env files or health records were intentionally committed; fixed demo credentials are clearly restricted to local learning.
-- [ ] Confirm latest main-branch CI is green and test-report artifacts are downloadable.
+- [x] Confirm latest main-branch CI is green and a test-report artifact is available: [run #38706341153](https://github.com/Dhruv-D-Bhrasadiya/NutriSync-/actions/runs/38706341153).
 - [ ] Save final submission evidence and record the release tag after acceptance.
 
 Do not mark environment-dependent tasks complete until they have run. Keep logs/screenshots sanitized and follow the instructor's evidence-file requirements.
