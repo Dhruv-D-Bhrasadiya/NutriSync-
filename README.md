@@ -211,22 +211,25 @@ ansible-playbook -i ansible/inventory/dev.ini ansible/playbooks/site.yml
 Inspect the second run for unintended changes. Roll back by setting `NUTRISYNC_IMAGE` to a known-good prior image and rerunning the playbook. Full steps: [ansible/README.md](ansible/README.md).
 
 ## Assignment documents
-- [Task 1 — problem and 15-item MVP](docs/01-problem-definition-and-mvp.md)
-- [Task 2 — Agile and DevOps workflow](docs/02-agile-plan-and-devops-workflow.md)
-- [Task 3 — SRS and architecture](docs/03-srs-architecture-and-api.md)
+This repository tracks a 14-task Agile/DevOps assignment. The guides describe scope and runbooks; environment-dependent work is only complete once verified evidence exists.
+
+- [Task 1 — problem definition and MVP](docs/01-problem-definition-and-mvp.md)
+- [Task 2 — Agile planning and DevOps workflow](docs/02-agile-plan-and-devops-workflow.md)
+- [Task 3 — SRS, architecture and API](docs/03-srs-architecture-and-api.md)
 - [Task 4 — Git/GitHub workflow](docs/04-git-github-workflow.md)
-- [Task 5 — feature development](docs/05-feature-development-playbook.md)
-- [Task 6 — MVP and release](docs/06-mvp-acceptance-and-release.md)
-- [Task 7 — Jenkins CI](docs/07-jenkins-ci-setup.md)
-- [Task 8 — pipeline and deployment](docs/08-jenkins-pipeline-and-deployment.md)
-- [Task 9 — Selenium plan](docs/09-selenium-test-plan.md)
-- [Task 10 — continuous testing](docs/10-continuous-testing-in-jenkins.md)
-- [Task 11 — Docker lifecycle](docs/11-docker-container-lifecycle.md)
-- [Task 12 — Jenkins-Docker CD](docs/12-jenkins-docker-cd.md)
-- [Task 13 — Ansible](docs/13-ansible-configuration-management.md)
-- [Task 14 — provisioning and recovery](docs/14-provisioning-reliability-and-rollback.md)
-- [Mermaid diagrams](docs/diagrams.md)
-- [Evidence checklist](docs/evidence-checklist.md)
+- [Task 5 — feature development playbook](docs/05-feature-development-playbook.md)
+- [Task 6 — MVP acceptance and release](docs/06-mvp-acceptance-and-release.md)
+- [Task 7 — Jenkins CI setup](docs/07-jenkins-ci-setup.md)
+- [Task 8 — Jenkins pipeline and deployment](docs/08-jenkins-pipeline-and-deployment.md)
+- [Task 9 — Selenium test plan](docs/09-selenium-test-plan.md)
+- [Task 10 — continuous testing in Jenkins](docs/10-continuous-testing-in-jenkins.md)
+- [Task 11 — Docker container lifecycle](docs/11-docker-container-lifecycle.md)
+- [Task 12 — Jenkins-to-Docker CD](docs/12-jenkins-docker-cd.md)
+- [Task 13 — Ansible configuration management](docs/13-ansible-configuration-management.md)
+- [Task 14 — provisioning, reliability and rollback](docs/14-provisioning-reliability-and-rollback.md)
+- [Architecture and workflow diagrams](docs/diagrams.md)
+- [Final evidence checklist](docs/evidence-checklist.md)
+- [GitHub issues backlog](https://github.com/Dhruv-D-Bhrasadiya/NutriSync-/issues)
 
 ## Important production gaps
 This is an educational MVP. Compose intentionally seeds known demo accounts; never use that profile in production. Email verification, password reset, rate limiting, audit trail, reminders, calendar integration, TLS termination, external secrets, production backups, monitoring, database migrations and compliance review are not implemented. Add them before exposing a real service publicly.
