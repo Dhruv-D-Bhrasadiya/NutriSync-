@@ -34,8 +34,8 @@ Add Selenium/JUnit dependencies and configure the base URL through an environmen
 ## Local execution
 ~~~bash
 # Start the app and isolated test database in another terminal.
-./mvnw -B test
-./mvnw -B clean verify
+mvn -B test
+mvn -B clean verify
 ~~~
 
 A test profile or Maven Failsafe goal may be needed. Common Surefire reports are under target/surefire-reports; confirm actual report configuration.

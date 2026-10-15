@@ -1,0 +1,45 @@
+server:
+  address: ${SERVER_ADDRESS:127.0.0.1}
+  port: ${SERVER_PORT:8080}
+  shutdown: graceful
+spring:
+  application:
+    name: nutrisync
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/nutrisync}
+    username: ${SPRING_DATASOURCE_USERNAME:nutrisync}
+    password: ${SPRING_DATASOURCE_PASSWORD:change-me}
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+  thymeleaf:
+    cache: ${THYMELEAF_CACHE:false}
+  mvc:
+    problemdetails:
+      enabled: true
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      probes:
+        enabled: true
+      show-details: never
+app:
+  time-zone: ${APP_TIME_ZONE:Asia/Kolkata}
+  seed-demo-data: ${APP_SEED_DEMO_DATA:false}
+  bootstrap-staff:
+    enabled: ${APP_BOOTSTRAP_STAFF_ENABLED:false}
+    name: ${APP_BOOTSTRAP_STAFF_NAME:}
+    email: ${APP_BOOTSTRAP_STAFF_EMAIL:}
+    password: ${APP_BOOTSTRAP_STAFF_PASSWORD:}
+logging:
+  level:
+    org.springframework.security: WARN

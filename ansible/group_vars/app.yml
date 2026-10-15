@@ -1,0 +1,17 @@
+---
+app_user: nutrisync
+app_group: nutrisync
+app_dir: /opt/nutrisync
+app_port: 8080
+app_timezone: Asia/Kolkata
+nutrisync_image: "{{ lookup('ansible.builtin.env', 'NUTRISYNC_IMAGE') }}"
+nutrisync_db_name: nutrisync
+nutrisync_db_user: nutrisync
+nutrisync_db_password: "{{ lookup('ansible.builtin.env', 'NUTRISYNC_DB_PASSWORD') }}"
+nutrisync_db_volume: nutrisync-postgres-data
+nutrisync_network: nutrisync-private
+
+nutrisync_bootstrap_staff_enabled: "{{ lookup('ansible.builtin.env', 'NUTRISYNC_BOOTSTRAP_STAFF_ENABLED') | default('false', true) | bool }}"
+nutrisync_bootstrap_staff_name: "{{ lookup('ansible.builtin.env', 'NUTRISYNC_BOOTSTRAP_STAFF_NAME') | default('NutriSync Nutritionist', true) }}"
+nutrisync_bootstrap_staff_email: "{{ lookup('ansible.builtin.env', 'NUTRISYNC_BOOTSTRAP_STAFF_EMAIL') | default('', true) }}"
+nutrisync_bootstrap_staff_password: "{{ lookup('ansible.builtin.env', 'NUTRISYNC_BOOTSTRAP_STAFF_PASSWORD') | default('', true) }}"

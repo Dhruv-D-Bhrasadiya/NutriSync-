@@ -23,7 +23,7 @@ ansible/
   group_vars/
     app.yml
   playbooks/
-    configure.yml
+    site.yml
   roles/
     common/
     docker/
@@ -55,14 +55,17 @@ nutrisync-dev ansible_host=192.0.2.10 ansible_user=deploy
 
 Never commit plaintext passwords in group_vars.
 
+## Optional initial staff account
+The application exposes an opt-in bootstrap for the first nutritionist account. The Ansible playbook keeps it disabled by default. When required for a fresh non-demo deployment, provide `NUTRISYNC_BOOTSTRAP_STAFF_ENABLED=true`, `NUTRISYNC_BOOTSTRAP_STAFF_NAME`, `NUTRISYNC_BOOTSTRAP_STAFF_EMAIL` and a unique `NUTRISYNC_BOOTSTRAP_STAFF_PASSWORD` of 20–72 characters via the control node's protected environment/secret manager. The playbook passes these values to the app container under `no_log`; do not place them in a committed inventory. Bootstrap creates an account only if absent and does not reset an existing password. Disable/remove the temporary secret values after provisioning.
+
 ## First execution
 ~~~bash
 ansible --version
 ansible-inventory -i ansible/inventory/dev.ini --list
 ansible -i ansible/inventory/dev.ini app -m ping
-ansible-playbook -i ansible/inventory/dev.ini ansible/playbooks/configure.yml --syntax-check
-ansible-playbook -i ansible/inventory/dev.ini ansible/playbooks/configure.yml --check --diff
-ansible-playbook -i ansible/inventory/dev.ini ansible/playbooks/configure.yml
+ansible-playbook -i ansible/inventory/dev.ini ansible/playbooks/site.yml --syntax-check
+ansible-playbook -i ansible/inventory/dev.ini ansible/playbooks/site.yml --check --diff
+ansible-playbook -i ansible/inventory/dev.ini ansible/playbooks/site.yml
 ~~~
 
 Review check mode before applying; not every module fully supports it.

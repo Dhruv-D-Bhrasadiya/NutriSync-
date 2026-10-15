@@ -1,0 +1,66 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-nutrisync}
+      POSTGRES_USER: ${POSTGRES_USER:-nutrisync}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env or your shell}
+    volumes:
+      - nutrisync-postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-nutrisync} -d ${POSTGRES_DB:-nutrisync}"]
+      interval: 5s
+      timeout: 5s
+      retries: 15
+    restart: unless-stopped
+
+  app:
+    image: ${NUTRISYNC_IMAGE:-nutrisync-app:dev}
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/${POSTGRES_DB:-nutrisync}
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER:-nutrisync}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env or your shell}
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-demo}
+      APP_SEED_DEMO_DATA: ${APP_SEED_DEMO_DATA:-true}
+      APP_BOOTSTRAP_STAFF_ENABLED: ${APP_BOOTSTRAP_STAFF_ENABLED:-false}
+      APP_BOOTSTRAP_STAFF_NAME: ${APP_BOOTSTRAP_STAFF_NAME:-}
+      APP_BOOTSTRAP_STAFF_EMAIL: ${APP_BOOTSTRAP_STAFF_EMAIL:-}
+      APP_BOOTSTRAP_STAFF_PASSWORD: ${APP_BOOTSTRAP_STAFF_PASSWORD:-}
+      APP_TIME_ZONE: ${APP_TIME_ZONE:-Asia/Kolkata}
+      SERVER_ADDRESS: "0.0.0.0"
+      SERVER_PORT: "8080"
+    ports:
+      - "127.0.0.1:${APP_HOST_PORT:-8080}:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      default:
+        aliases:
+          # Use a hostname that does not end in the special .app TLD; modern browsers
+          # may automatically upgrade plain HTTP navigation to HTTPS for "app".
+          - nutrisync-web
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:8080/actuator/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 50s
+    restart: unless-stopped
+
+  selenium:
+    image: selenium/standalone-chrome:4.51.0
+    profiles: ["e2e"]
+    shm_size: 2gb
+    ports:
+      - "127.0.0.1:4444:4444"
+    depends_on:
+      app:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  nutrisync-postgres:

@@ -21,8 +21,8 @@ Record OS/version, Ansible version, sanitized target alias, source commit, artif
 ## Idempotency proof
 Run the same playbook twice:
 ~~~bash
-ansible-playbook -i ansible/inventory/dev.ini ansible/playbooks/configure.yml
-ansible-playbook -i ansible/inventory/dev.ini ansible/playbooks/configure.yml
+ansible-playbook -i ansible/inventory/dev.ini ansible/playbooks/site.yml
+ansible-playbook -i ansible/inventory/dev.ini ansible/playbooks/site.yml
 ~~~
 
 Inspect the second-run summary. Already-correct resources should show zero unintended changes. Investigate any changing task; do not assume idempotency.

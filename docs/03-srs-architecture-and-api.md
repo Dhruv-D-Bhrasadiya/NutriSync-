@@ -40,7 +40,7 @@ Security uses Spring Security, BCrypt or equivalent, ownership checks, parameter
 | Security | Spring Security, session login |
 | Persistence | Spring Data JPA / Hibernate |
 | Database | PostgreSQL |
-| Build | Maven Wrapper |
+| Build | Maven installation |
 | Runtime | Executable JAR with embedded Tomcat |
 | Reverse proxy | Nginx |
 | UI tests | Selenium 4, JUnit 5 |
@@ -57,39 +57,38 @@ Browser → Nginx → Spring Boot application (embedded Tomcat) → controller �
 
 **availability_slots:** id, nutritionist_id (users FK), starts_at, ends_at, status, created_at.
 
-**bookings:** id, client_id (users FK), slot_id (availability_slots FK), status, requested_at, updated_at, optional decision_at. Avoid clinical notes.
+**bookings:** id, client_id (users FK), slot_id (availability_slots FK), status, created_at and updated_at. Avoid clinical notes.
 
 Add indexes for email, slot start, client booking history and slot lookup. Use transactions and a database-enforced slot claim. A simple “check then insert” without locking can race. Use one source of truth for slot occupancy.
 
 ## Proposed API
 All routes under /api/v1. Browser MVC pages may wrap equivalent operations.
 
+The browser UI uses session-based form login at `/login` and logout at `/logout`. The JSON API is stateless HTTP Basic; it does not expose separate JSON login/logout endpoints. All API routes below are prefixed with `/api/v1`.
+
 | Method | Path | Access | Purpose |
 |---|---|---|---|
-| POST | /auth/register | Public | Register client |
-| POST | /auth/login | Public | Create session |
-| POST | /auth/logout | Authenticated | End session |
-| GET | /slots?from=&to= | Configured read access | List open slots |
-| POST | /slots | NUTRITIONIST/ADMIN | Create slot |
-| PATCH | /slots/{slotId} | Owner/ADMIN | Update unused slot |
-| POST | /bookings | CLIENT | Request booking |
-| GET | /bookings/mine | CLIENT | List own bookings |
-| GET | /bookings/{bookingId} | Owner/authorized staff | Booking details |
-| PATCH | /bookings/{bookingId}/confirm | NUTRITIONIST/ADMIN | Confirm pending |
-| PATCH | /bookings/{bookingId}/reject | NUTRITIONIST/ADMIN | Reject pending |
-| PATCH | /bookings/{bookingId}/cancel | Owner/authorized staff | Cancel by policy |
-| GET | /actuator/health | Runtime/monitor | Health check |
+| POST | `/api/v1/auth/register` | Public | Register a client |
+| GET | `/api/v1/slots` | Public | List future open slots |
+| POST | `/api/v1/slots` | NUTRITIONIST/ADMIN | Create availability with ISO-8601 `startsAt`/`endsAt` instants |
+| POST | `/api/v1/bookings` | CLIENT | Request a slot by `slotId` |
+| GET | `/api/v1/bookings/mine` | CLIENT | List own bookings |
+| GET | `/api/v1/bookings/{bookingId}` | Owner/assigned nutritionist/ADMIN | Fetch authorized booking |
+| PATCH | `/api/v1/bookings/{bookingId}/confirm` | Assigned NUTRITIONIST/ADMIN | Confirm a pending request |
+| PATCH | `/api/v1/bookings/{bookingId}/reject` | Assigned NUTRITIONIST/ADMIN | Reject and release slot |
+| PATCH | `/api/v1/bookings/{bookingId}/cancel` | Booking owner or authorized staff | Cancel according to policy |
+| GET | `/actuator/health` | Runtime/monitor | Health check |
 
-Use 201 for creation, 400 for invalid input, 401 unauthenticated, 403 unauthorized, 404 not found and 409 slot conflict. Check ownership before revealing another user's record.
+Successful registration/creation returns 201; invalid input returns 400, unauthenticated API requests return 401, unauthorized actions return 403, missing or non-owned records return 404, and unavailable slots/state conflicts return 409. The API disables CSRF only for its stateless HTTP Basic route group; the browser forms retain Spring Security CSRF protection. Check ownership before returning a booking to a caller.
 
 ## Local setup
 1. Install JDK 17, Git and Docker.
 2. Clone repo and create a feature branch.
-3. Add Maven Wrapper, pom.xml, source and tests.
+3. Install Maven 3.9+; create pom.xml, source and tests.
 4. Start PostgreSQL locally or through a development Compose setup.
 5. Set SPRING_DATASOURCE_URL, SPRING_DATASOURCE_USERNAME and SPRING_DATASOURCE_PASSWORD outside Git.
-6. Run ./mvnw clean verify (Windows: mvnw.cmd clean verify).
-7. Start with ./mvnw spring-boot:run; use synthetic users and slots.
+6. Run mvn clean verify (Windows: mvn clean verify).
+7. Start with mvn spring-boot:run; use synthetic users and slots.
 8. Save actual output and screenshots in the evidence checklist.
 
 Lock remaining details during implementation: ID type, slot occupancy model, app port, slot-list access and demo timezone.

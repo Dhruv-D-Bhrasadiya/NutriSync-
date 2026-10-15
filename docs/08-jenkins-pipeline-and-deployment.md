@@ -5,7 +5,7 @@ GitHub → Jenkins agent → Maven build/test → versioned JAR/image → Linux 
 
 ## Jenkinsfile stages
 - Checkout exact commit.
-- Verify/build using ./mvnw -B clean verify.
+- Verify/build using mvn -B clean verify.
 - Package executable JAR; use actual artifact name after pom.xml exists.
 - Publish JUnit reports and archive artifacts.
 - Deploy only from approved branch/tag after tests pass.
