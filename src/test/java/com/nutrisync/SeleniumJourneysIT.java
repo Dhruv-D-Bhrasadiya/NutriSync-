@@ -25,18 +25,16 @@ class SeleniumJourneysIT {
     private WebDriverWait wait;
 
     @RegisterExtension
-    final TestWatcher screenshotOnFailure = new TestWatcher() {
-        @Override
-        public void testFailed(ExtensionContext context, Throwable cause) {
-            if (driver instanceof TakesScreenshot screenshotDriver) {
-                try {
-                    Path directory = Path.of("target", "selenium-failures");
-                    Files.createDirectories(directory);
-                    String safeName = context.getRequiredTestMethod().getName().replaceAll("[^A-Za-z0-9._-]", "_");
-                    Files.write(directory.resolve(safeName + ".png"), screenshotDriver.getScreenshotAs(OutputType.BYTES));
-                } catch (IOException | WebDriverException ignored) {
-                    // Keep the original test failure; screenshot capture is best-effort.
-                }
+    final AfterTestExecutionCallback screenshotOnFailure = context -> {
+        // Run before @AfterEach quits the driver, otherwise the failure screenshot cannot be captured.
+        if (context.getExecutionException().isPresent() && driver instanceof TakesScreenshot screenshotDriver) {
+            try {
+                Path directory = Path.of("target", "selenium-failures");
+                Files.createDirectories(directory);
+                String safeName = context.getRequiredTestMethod().getName().replaceAll("[^A-Za-z0-9._-]", "_");
+                Files.write(directory.resolve(safeName + ".png"), screenshotDriver.getScreenshotAs(OutputType.BYTES));
+            } catch (IOException | WebDriverException ignored) {
+                // Keep the original test failure; screenshot capture is best-effort.
             }
         }
     };
