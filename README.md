@@ -229,6 +229,7 @@ This repository tracks a 14-task Agile/DevOps assignment. The guides describe sc
 - [Task 14 — provisioning, reliability and rollback](docs/14-provisioning-reliability-and-rollback.md)
 - [Architecture and workflow diagrams](docs/diagrams.md)
 - [Final evidence checklist](docs/evidence-checklist.md)
+- [Canonical assignment backlog (P01–P15 and Tasks 1–14)](docs/assignment-backlog.md)
 - [GitHub issues backlog](https://github.com/Dhruv-D-Bhrasadiya/NutriSync-/issues)
 
 ## Important production gaps
