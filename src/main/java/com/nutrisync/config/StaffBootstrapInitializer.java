@@ -45,7 +45,7 @@ public class StaffBootstrapInitializer implements ApplicationRunner {
             throw new IllegalStateException("Bootstrap staff password must contain 20–72 characters.");
         }
 
-        AppUser account = users.createDemoUserIfMissing(name, email, password, Role.NUTRITIONIST);
+        AppUser account = users.createUserIfMissing(name, email, password, Role.NUTRITIONIST);
         if (account.getRole() != Role.NUTRITIONIST && account.getRole() != Role.ADMIN) {
             throw new IllegalStateException("The bootstrap email already belongs to a non-staff account; choose a dedicated staff email.");
         }
