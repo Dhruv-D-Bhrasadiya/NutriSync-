@@ -54,7 +54,7 @@ This checklist distinguishes committed implementation from work that must still 
 ## Task 9 — Selenium test design and local/CI execution
 - [x] Five browser journeys with assertions and synthetic data isolation implemented.
 - [x] The Selenium suite passed in the linked CI run.
-- [x] CI artifact upload is configured and a downloadable report artifact was verified on the latest successful main run: [run #38706341153](https://github.com/Dhruv-D-Bhrasadiya/NutriSync-/actions/runs/38706341153) (artifact ID `11959435410`, expires 2026-10-29).
+- [x] CI artifact upload is configured and a downloadable report artifact was verified on the latest completed green main run: [run #38720370095](https://github.com/Dhruv-D-Bhrasadiya/NutriSync-/actions/runs/38720370095) (artifact ID `11964588451`, expires 2026-10-29).
 - [ ] Save a local test report/screenshot set for the assignment submission.
 - Evidence: [Latest successful main CI run](https://github.com/Dhruv-D-Bhrasadiya/NutriSync-/actions/runs/38706341153)
 
@@ -97,7 +97,7 @@ This checklist distinguishes committed implementation from work that must still 
 ## Final review
 - [x] README links point to the committed documentation and project files.
 - [x] No real credentials, private keys, .env files or health records were intentionally committed; fixed demo credentials are clearly restricted to local learning.
-- [x] Confirm latest main-branch CI is green and a test-report artifact is available: [run #38706341153](https://github.com/Dhruv-D-Bhrasadiya/NutriSync-/actions/runs/38706341153).
+- [x] Confirm latest main-branch CI is green and a test-report artifact is available: [run #38720370095](https://github.com/Dhruv-D-Bhrasadiya/NutriSync-/actions/runs/38720370095), artifact `11964588451`. This run passed on SHA `bcac6f1e4960635fd96c5187dc10e214a392dc7c`; subsequent evidence-only edits trigger a fresh CI run.
 - [ ] Save final submission evidence and record the release tag after acceptance.
 
 Do not mark environment-dependent tasks complete until they have run. Keep logs/screenshots sanitized and follow the instructor's evidence-file requirements.
