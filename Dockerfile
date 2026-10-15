@@ -6,7 +6,7 @@ COPY src ./src
 RUN mvn -B -DskipTests package
 
 FROM eclipse-temurin:17-jre-jammy
-ENV JAVA_OPTS="" SERVER_PORT=8080
+ENV JAVA_OPTS="" SERVER_PORT=8080 SERVER_ADDRESS=0.0.0.0
 RUN apt-get update \
     && apt-get install -y --no-install-recommends curl \
     && rm -rf /var/lib/apt/lists/* \
