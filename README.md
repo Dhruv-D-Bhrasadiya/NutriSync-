@@ -115,11 +115,11 @@ Run from the repository root:
 ~~~bash
 mvn -B -Pselenium-e2e verify \
   -De2e.enabled=true \
-  -De2e.baseUrl=http://app:8080 \
+  -De2e.baseUrl=http://nutrisync-web:8080 \
   -De2e.remoteUrl=http://localhost:4444
 ~~~
 
-The remote browser resolves the Compose service name `app`; Maven connects to Selenium on localhost port 4444. These browser tests use the demo data profile. Failure screenshots are saved under `target/selenium-failures/`.
+The remote browser resolves the Compose network alias `nutrisync-web` (chosen to avoid browsers' automatic HTTPS upgrades for the hostname `app`); Maven connects to Selenium on localhost port 4444. These browser tests use the demo data profile. Failure screenshots are saved under `target/selenium-failures/`.
 
 When finished, `docker compose --profile e2e down` removes the containers but preserves the named database volume.
 
