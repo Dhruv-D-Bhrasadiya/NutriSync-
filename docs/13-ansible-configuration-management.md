@@ -23,7 +23,7 @@ ansible/
   group_vars/
     app.yml
   playbooks/
-    configure.yml
+    site.yml
   roles/
     common/
     docker/
@@ -63,9 +63,9 @@ The application exposes an opt-in bootstrap for the first nutritionist account. 
 ansible --version
 ansible-inventory -i ansible/inventory/dev.ini --list
 ansible -i ansible/inventory/dev.ini app -m ping
-ansible-playbook -i ansible/inventory/dev.ini ansible/playbooks/configure.yml --syntax-check
-ansible-playbook -i ansible/inventory/dev.ini ansible/playbooks/configure.yml --check --diff
-ansible-playbook -i ansible/inventory/dev.ini ansible/playbooks/configure.yml
+ansible-playbook -i ansible/inventory/dev.ini ansible/playbooks/site.yml --syntax-check
+ansible-playbook -i ansible/inventory/dev.ini ansible/playbooks/site.yml --check --diff
+ansible-playbook -i ansible/inventory/dev.ini ansible/playbooks/site.yml
 ~~~
 
 Review check mode before applying; not every module fully supports it.
