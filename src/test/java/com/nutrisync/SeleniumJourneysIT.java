@@ -88,6 +88,8 @@ class SeleniumJourneysIT {
         WebElement row = wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("[id^='booking-row-']")));
         String bookingId = row.getAttribute("data-booking-id");
         driver.findElement(By.id("logout-button")).click();
+        // Wait for the logout POST and redirect to complete before starting a fresh login.
+        wait.until(ExpectedConditions.urlContains("logout"));
         login("nutritionist@nutrisync.local", "NutriSyncDemo!2026");
         driver.get(baseUrl() + "/staff/bookings");
         wait.until(ExpectedConditions.presenceOfElementLocated(By.id("confirm-booking-" + bookingId)));
@@ -112,9 +114,10 @@ class SeleniumJourneysIT {
 
     private void login(String email, String password) {
         driver.get(baseUrl() + "/login");
-        driver.findElement(By.id("username")).sendKeys(email);
-        driver.findElement(By.id("password")).sendKeys(password);
-        driver.findElement(By.id("login-submit")).click();
+        WebElement username = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("username")));
+        username.sendKeys(email);
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("password"))).sendKeys(password);
+        wait.until(ExpectedConditions.elementToBeClickable(By.id("login-submit"))).click();
         wait.until(ExpectedConditions.urlContains("/slots"));
     }
 
