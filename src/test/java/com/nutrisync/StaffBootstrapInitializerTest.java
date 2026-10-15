@@ -15,7 +15,7 @@ class StaffBootstrapInitializerTest {
     void createsNutritionistAccountWithValidatedCredentials() throws Exception {
         UserService users = mock(UserService.class);
         AppUser nutritionist = new AppUser("Demo Nutritionist", "nutritionist@example.test", "hashed", Role.NUTRITIONIST);
-        when(users.createDemoUserIfMissing(
+        when(users.createUserIfMissing(
             "Demo Nutritionist",
             "nutritionist@example.test",
             "A-Unique-Strong-Password-2026",
@@ -30,7 +30,7 @@ class StaffBootstrapInitializerTest {
         );
         initializer.run(new DefaultApplicationArguments(new String[0]));
 
-        verify(users).createDemoUserIfMissing(
+        verify(users).createUserIfMissing(
             "Demo Nutritionist",
             "nutritionist@example.test",
             "A-Unique-Strong-Password-2026",
