@@ -17,7 +17,7 @@ This is an educational scheduling system, not a clinical decision-support or med
 | Platform owners | GitHub, Jenkins, registry and host access configured safely |
 
 ## Pain points to validate
-These are hypotheses, not researched findings: availability may be fragmented; status may be unclear; two users may compete for one slot; cancellation may not release availability; deployment may be inconsistent. Validate by asking two prospective users/classmates to describe their scheduling process and record their actual frustrations. Do not invent interview outcomes.
+These are hypotheses, not researched findings: availability may be fragmented; status may be unclear; two users may compete for one slot; cancellation may not release availability; deployment may be inconsistent. No user interviews were conducted for the 2026-10-16 evidence run, so these hypotheses remain unvalidated. Do not infer participant experiences or invent interview outcomes. If interviews are conducted later, record only anonymized, actual responses.
 
 ## Objectives and success criteria
 | Objective | Target |
