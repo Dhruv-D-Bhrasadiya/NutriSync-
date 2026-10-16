@@ -1,7 +1,9 @@
 <!doctype html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>My bookings · NutriSync</title><link rel="stylesheet" th:href="@{/css/app.css}"></head>
-<body><header class="topbar"><a class="brand" th:href="@{/slots}">NutriSync</a><nav class="nav"><a th:href="@{/slots}">Availability</a><a th:href="@{/bookings}">My bookings</a><form th:action="@{/logout}" method="post"><button class="secondary" id="logout-button" type="submit">Sign out</button></form></nav></header>
+<body><header class="topbar"><a class="brand" th:href="@{/slots}">NutriSync</a><nav class="nav" aria-label="Primary navigation">
+<a th:href="@{/slots}" th:classappend="${currentPath == '/slots' ? 'active' : ''}">Availability</a><a th:href="@{/bookings}" class="active" aria-current="page">My bookings</a>
+<form th:action="@{/logout}" method="post"><button class="secondary" id="logout-button" type="submit">Sign out</button></form></nav></header>
 <main><section class="hero"><h1>My consultations</h1><p>Track requests, confirmation and cancellation from one place.</p></section>
 <div th:if="${success}" class="alert success" th:text="${success}"></div><div th:if="${error}" class="alert error" th:text="${error}"></div>
 <div th:if="${#lists.isEmpty(bookings)}" class="card empty">You have no bookings yet. <a th:href="@{/slots}">Browse available slots</a>.</div>
@@ -10,4 +12,4 @@
 <td th:text="'#' + ${booking.id}">#1</td><td><strong th:text="${booking.startsAt}">Start</strong><br><small class="muted" th:text="'Ends ' + ${booking.endsAt}">End</small></td><td th:text="${booking.nutritionistName}">Nutritionist</td>
 <td><span class="badge" th:classappend="${booking.status}" th:text="${booking.status}">PENDING</span></td>
 <td><form th:if="${booking.canCancel and (booking.status == 'PENDING' or booking.status == 'CONFIRMED')}" th:action="@{/bookings/{id}/cancel(id=${booking.id})}" method="post"><button class="danger" type="submit" th:id="'cancel-booking-' + ${booking.id}" onclick="return confirm('Cancel this consultation booking?')">Cancel</button></form><span th:unless="${booking.canCancel and (booking.status == 'PENDING' or booking.status == 'CONFIRMED')}" class="muted">—</span></td>
-</tr></tbody></table></div><p class="help">Client cancellation requires at least 24 hours' notice.</p></main><footer>NutriSync · Keep health information out of demo booking notes</footer></body></html>
+</tr></tbody></table></div><p class="help">Client cancellation requires at least 24 hours' notice.</p></main><footer>NutriSync · Consultation scheduling MVP</footer></body></html>
