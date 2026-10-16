@@ -12,7 +12,10 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -41,6 +44,58 @@ class BookingServiceIntegrationTest {
         ResponseStatusException exception = catchThrowableOfType(
             () -> bookingService.requestBooking(fixture.otherClient, fixture.slot.getId()), ResponseStatusException.class);
         assertThat(exception.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
+    }
+
+    @Test
+    void concurrentRequestsForSameSlotCreateOnlyOneBooking() throws Exception {
+        Fixture fixture = fixture();
+        int contenders = 8;
+        ExecutorService pool = Executors.newFixedThreadPool(contenders);
+        CountDownLatch ready = new CountDownLatch(contenders);
+        CountDownLatch start = new CountDownLatch(1);
+        AtomicInteger winners = new AtomicInteger();
+        AtomicInteger conflicts = new AtomicInteger();
+        List<AppUser> clients = java.util.stream.IntStream.range(0, contenders)
+            .mapToObj(i -> users.save(new AppUser("Concurrent Client " + i + " " + UUID.randomUUID().toString().substring(0, 6),
+                "race-" + UUID.randomUUID() + "@example.test",
+                passwordEncoder.encode("CorrectHorseBattery1"), Role.CLIENT)))
+            .toList();
+
+        try {
+            List<Future<?>> attempts = clients.stream().map(client -> pool.submit(() -> {
+                ready.countDown();
+                if (!start.await(10, TimeUnit.SECONDS)) {
+                    throw new IllegalStateException("Concurrent test start timed out");
+                }
+                try {
+                    bookingService.requestBooking(client, fixture.slot.getId());
+                    winners.incrementAndGet();
+                } catch (ResponseStatusException ex) {
+                    if (ex.getStatusCode() == HttpStatus.CONFLICT) {
+                        conflicts.incrementAndGet();
+                    } else {
+                        throw ex;
+                    }
+                }
+                return null;
+            })).toList();
+
+            assertThat(ready.await(10, TimeUnit.SECONDS)).isTrue();
+            start.countDown();
+            for (Future<?> attempt : attempts) {
+                attempt.get(30, TimeUnit.SECONDS);
+            }
+        } finally {
+            start.countDown();
+            pool.shutdownNow();
+            assertThat(pool.awaitTermination(10, TimeUnit.SECONDS)).isTrue();
+        }
+
+        assertThat(winners).hasValue(1);
+        assertThat(conflicts).hasValue(contenders - 1);
+        assertThat(bookings.findAll()).filteredOn(b -> b.getSlot().getId().equals(fixture.slot.getId()))
+            .hasSize(1);
+        assertThat(slots.findById(fixture.slot.getId()).orElseThrow().getStatus()).isEqualTo(SlotStatus.BOOKED);
     }
 
     @Test
