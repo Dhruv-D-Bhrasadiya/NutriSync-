@@ -1,13 +1,7 @@
 <!doctype html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Create account · NutriSync</title><link rel="stylesheet" th:href="@{/css/app.css}"></head>
-<body><header class="topbar"><a class="brand" th:href="@{/slots}">NutriSync</a><nav class="nav"><a th:href="@{/slots}">Availability</a><a th:href="@{/login}">Sign in</a></nav></header>
-<main><section class="card form-card"><h1>Create your account</h1><p class="muted">Register as a client to request consultations and track appointments.</p>
-<div th:if="${error}" class="alert error" th:text="${error}"></div>
-<form th:action="@{/register}" method="post" id="registration-form">
-<div class="field"><label for="name">Full name</label><input id="name" name="name" autocomplete="name" required minlength="2" maxlength="100" th:value="${param.name}"></div>
-<div class="field"><label for="email">Email address</label><input id="email" name="email" type="email" autocomplete="email" required maxlength="254" th:value="${param.email}"></div>
-<div class="field"><label for="password">Password</label><input id="password" name="password" type="password" autocomplete="new-password" required minlength="10" maxlength="72"><small class="help">Use 10–72 characters. Never reuse a real account password for this demo.</small></div>
-<button type="submit" id="register-submit">Create account</button>
-</form><p class="muted">Already registered? <a th:href="@{/login}">Sign in</a>.</p>
-</section></main><footer>NutriSync · Demo scheduling app</footer></body></html>
+<body><header class="topbar"><a class="brand" th:href="@{/slots}">NutriSync</a><nav class="nav" aria-label="Primary navigation"><a th:href="@{/slots}" th:classappend="${currentPath == '/slots' ? 'active' : ''}">Availability</a><a th:href="@{/login}">Sign in</a><a th:href="@{/register}" class="active" aria-current="page">Create account</a></nav></header>
+<main><section class="card form-card"><h1>Create your account</h1><p class="muted">Register as a client to request consultations and track appointments.</p><div th:if="${error}" class="alert error" th:text="${error}"></div>
+<form th:action="@{/register}" method="post" id="registration-form"><div class="field"><label for="name">Full name</label><input id="name" name="name" autocomplete="name" required minlength="2" maxlength="100" th:value="${param.name}"></div><div class="field"><label for="email">Email address</label><input id="email" name="email" type="email" autocomplete="email" required maxlength="254" th:value="${param.email}"></div><div class="field"><label for="password">Password</label><input id="password" name="password" type="password" autocomplete="new-password" required minlength="10" maxlength="72"><small class="help">Use 10–72 characters. Choose a unique password.</small></div><button type="submit" id="register-submit">Create account</button></form>
+<p class="muted">Already registered? <a th:href="@{/login}">Sign in</a>.</p></section></main><footer>NutriSync · Consultation scheduling MVP</footer></body></html>
