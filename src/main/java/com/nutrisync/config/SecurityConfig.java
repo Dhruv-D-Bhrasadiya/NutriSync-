@@ -33,7 +33,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(org.springframework.http.HttpMethod.POST, "/api/v1/auth/register").permitAll()
                 .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/v1/slots").permitAll()
-                .requestMatchers(org.springframework.http.HttpMethod.POST, "/api/v1/slots").hasAnyRole("NUTRITIONIST", "ADMIN")
+                .requestMatchers(org.springframework.http.HttpMethod.POST, "/api/v1/slots").hasRole("NUTRITIONIST")
                 .requestMatchers(org.springframework.http.HttpMethod.POST, "/api/v1/bookings").hasRole("CLIENT")
                 .anyRequest().authenticated())
             .httpBasic(Customizer.withDefaults());
@@ -45,6 +45,7 @@ public class SecurityConfig {
     SecurityFilterChain webSecurity(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(auth -> auth
                 .requestMatchers("/", "/slots", "/register", "/login", "/css/**", "/actuator/health", "/error").permitAll()
+                .requestMatchers("/admin/**").hasRole("ADMIN")
                 .requestMatchers("/staff/**").hasAnyRole("NUTRITIONIST", "ADMIN")
                 .requestMatchers("/bookings/**").authenticated()
                 .anyRequest().permitAll())
