@@ -36,7 +36,6 @@ pipeline {
 
     environment {
         IMAGE_NAME = 'nutrisync'
-        IMAGE_TAG = 'unset'
     }
 
     stages {
