@@ -44,6 +44,21 @@ class BookingServiceIntegrationTest {
     }
 
     @Test
+    void nutritionistCannotConfirmAnotherNutritionistsBooking() {
+        Fixture fixture = fixture();
+        AppUser anotherNutritionist = users.save(new AppUser("Other Nutritionist " + UUID.randomUUID().toString().substring(0, 8),
+            "other-nutritionist-" + UUID.randomUUID().toString().substring(0, 8) + "@example.test",
+            passwordEncoder.encode("CorrectHorseBattery1"), Role.NUTRITIONIST));
+        Booking booking = bookingService.requestBooking(fixture.client, fixture.slot.getId());
+
+        ResponseStatusException exception = catchThrowableOfType(
+            () -> bookingService.confirm(anotherNutritionist, booking.getId()), ResponseStatusException.class);
+
+        assertThat(exception.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+        assertThat(bookings.findById(booking.getId()).orElseThrow().getStatus()).isEqualTo(BookingStatus.PENDING);
+    }
+
+    @Test
     void staffRejectionReleasesFutureSlot() {
         Fixture fixture = fixture();
         Booking booking = bookingService.requestBooking(fixture.client, fixture.slot.getId());
