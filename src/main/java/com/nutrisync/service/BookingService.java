@@ -71,16 +71,11 @@ public class BookingService {
         AppUser staff = currentUser(principal);
         requireAdmin(staff);
         return new BookingMonitoringStats(
-            bookings.count(),
-            bookings.countByStatus(BookingStatus.PENDING),
-            bookings.countByStatus(BookingStatus.CONFIRMED),
-            bookings.countByStatus(BookingStatus.REJECTED),
-            bookings.countByStatus(BookingStatus.CANCELLED),
-            bookings.countByStatus(BookingStatus.COMPLETED),
-            users.countByRole(Role.CLIENT),
-            users.countByRole(Role.NUTRITIONIST),
-            users.countByRole(Role.ADMIN),
-            users.count()
+            bookings.count(), bookings.countByStatus(BookingStatus.PENDING),
+            bookings.countByStatus(BookingStatus.CONFIRMED), bookings.countByStatus(BookingStatus.REJECTED),
+            bookings.countByStatus(BookingStatus.CANCELLED), bookings.countByStatus(BookingStatus.COMPLETED),
+            users.countByRole(Role.CLIENT), users.countByRole(Role.NUTRITIONIST),
+            users.countByRole(Role.ADMIN), users.count()
         );
     }
 
