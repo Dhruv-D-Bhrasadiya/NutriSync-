@@ -32,12 +32,12 @@ public class DemoDataInitializer {
         AppUser nutritionistThree = users.createUserIfMissing("Dr. Isha Desai", "isha.desai@nutrisync.local", "NutriSyncDemo!2026", Role.NUTRITIONIST);
         users.createUserIfMissing("Demo Client", "client@nutrisync.local", "NutriSyncDemo!2026", Role.CLIENT);
         users.createUserIfMissing("Demo Administrator", "admin@nutrisync.local", "NutriSyncAdmin!2026", Role.ADMIN);
-        if (slots.count() > 0) return;
-
-        // Seed a separate calendar per nutritionist so each account owns and manages its own availability.
+        // Seed a separate calendar for each named nutritionist, even if the local demo
+        // database already contains slots created by an older version of the seeder.
         AppUser[] nutritionists = {nutritionistOne, nutritionistTwo, nutritionistThree};
         LocalDate firstDay = LocalDate.now(zone).plusDays(2);
         for (int person = 0; person < nutritionists.length; person++) {
+            if (!slots.findAllForNutritionist(nutritionists[person].getId()).isEmpty()) continue;
             for (int day = 0; day < 30; day++) {
                 LocalDate date = firstDay.plusDays(day);
                 if (date.getDayOfWeek() == DayOfWeek.SUNDAY) continue;
