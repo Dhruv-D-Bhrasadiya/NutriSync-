@@ -90,7 +90,7 @@ class SeleniumJourneysIT {
         driver.findElement(By.id("logout-button")).click();
         // Wait for the logout POST and redirect to complete before starting a fresh login.
         wait.until(ExpectedConditions.urlContains("logout"));
-        login("nutritionist@nutrisync.local", "NutriSyncDemo!2026");
+        login("aanya.mehta@nutrisync.local", "NutriSyncDemo!2026");
         driver.get(baseUrl() + "/staff/bookings");
         wait.until(ExpectedConditions.presenceOfElementLocated(By.id("confirm-booking-" + bookingId)));
         driver.findElement(By.id("confirm-booking-" + bookingId)).click();
