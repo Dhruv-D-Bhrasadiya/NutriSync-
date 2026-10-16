@@ -82,7 +82,7 @@ class SeleniumJourneysIT {
     }
 
     @Test @Order(4)
-    void nutritionistCanConfirmTheBooking() {
+    void nutritionistCanConfirmTheBooking() throws Exception {
         // A nutritionist may see and decide only requests for the slots they own.
         // Sign in as the owner, locate one open slot, and publish no cross-account data.
         login("aanya.mehta@nutrisync.local", "NutriSyncDemo!2026");
