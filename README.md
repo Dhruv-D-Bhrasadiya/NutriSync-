@@ -38,15 +38,22 @@ When the app reports healthy, open **http://localhost:8080**. Port 8080 is publi
 
 Health endpoint: http://localhost:8080/actuator/health
 
-### Demo login accounts
+### Local demo accounts
 
-| Role | Email | Password |
-|---|---|---|
-| Client | `client@nutrisync.local` | `NutriSyncDemo!2026` |
-| Nutritionist | `nutritionist@nutrisync.local` | `NutriSyncDemo!2026` |
-| Administrator | `admin@nutrisync.local` | `NutriSyncAdmin!2026` |
+All accounts below are seeded only for a local/private demo environment. They share sample passwords for convenience and must never be used in a public deployment.
 
-These known credentials are seeded only when both the `demo` profile and `APP_SEED_DEMO_DATA=true` are enabled. Compose enables them for this local learning stack. Do not use them in a public deployment.
+| Role | Name | Email | Password |
+|---|---|---|---|
+| Client | Demo Client | `client@nutrisync.local` | `NutriSyncDemo!2026` |
+| Nutritionist | Dr. Aanya Mehta | `aanya.mehta@nutrisync.local` | `NutriSyncDemo!2026` |
+| Nutritionist | Dr. Rohan Kulkarni | `rohan.kulkarni@nutrisync.local` | `NutriSyncDemo!2026` |
+| Nutritionist | Dr. Isha Desai | `isha.desai@nutrisync.local` | `NutriSyncDemo!2026` |
+| Administrator | Demo Administrator | `admin@nutrisync.local` | `NutriSyncAdmin!2026` |
+
+Each nutritionist has a separate sample availability calendar. The signed-in nutritionist may publish availability and confirm/reject only requests for slots owned by their own account. The administrator has a read-only monitoring dashboard at `/admin/monitoring` and cannot publish availability as a nutritionist.
+
+These fixed credentials are available only when both the `demo` profile and `APP_SEED_DEMO_DATA=true` are enabled. Compose enables them for local learning. Do not use seeded accounts or passwords in a public deployment.
+
 
 ### Stop/reset
 
