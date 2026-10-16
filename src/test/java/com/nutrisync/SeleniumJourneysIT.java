@@ -96,7 +96,7 @@ class SeleniumJourneysIT {
         String slotId = ownOpenSlot.getAttribute("data-slot-id");
 
         driver.findElement(By.id("logout-button")).click();
-        wait.until(ExpectedConditions.urlContains("logout"));
+        wait.until(ExpectedConditions.urlContains("/slots"));
         login("client@nutrisync.local", "NutriSyncDemo!2026");
         wait.until(ExpectedConditions.elementToBeClickable(By.id("book-slot-" + slotId))).click();
         wait.until(ExpectedConditions.urlContains("/bookings"));
