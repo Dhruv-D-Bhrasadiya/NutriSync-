@@ -83,28 +83,36 @@ class SeleniumJourneysIT {
 
     @Test @Order(4)
     void nutritionistCanConfirmTheBooking() {
-        // Use a fresh account and a specific slot owned by the nutritionist so this
-        // integration journey does not depend on the first public slot being unclaimed.
+        // First select an open slot from this nutritionist's own calendar. This proves
+        // that the booking confirmation journey uses owner-scoped data rather than an
+        // arbitrary public slot that may belong to another nutritionist.
+        login("aanya.mehta@nutrisync.local", "NutriSyncDemo!2026");
+        driver.get(baseUrl() + "/staff/slots/new");
+        wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector("tr[data-slot-id]")));
+        WebElement ownOpenSlot = driver.findElements(By.cssSelector("tr[data-slot-id]")).stream()
+            .filter(slotRow -> slotRow.getText().contains("OPEN"))
+            .findFirst()
+            .orElseThrow(() -> new AssertionError("The nutritionist should have an open slot in the demo calendar."));
+        String slotId = ownOpenSlot.getAttribute("data-slot-id");
+
+        driver.findElement(By.id("logout-button")).click();
+        wait.until(ExpectedConditions.urlContains("logout"));
         login("client@nutrisync.local", "NutriSyncDemo!2026");
-        requestFirstAvailableSlot();
-        WebElement row = wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("[id^='booking-row-']")));
-        String bookingId = row.getAttribute("data-booking-id");
+        wait.until(ExpectedConditions.elementToBeClickable(By.id("book-slot-" + slotId))).click();
+        wait.until(ExpectedConditions.urlContains("/bookings"));
+        WebElement bookingRow = wait.until(ExpectedConditions.presenceOfElementLocated(
+            By.cssSelector("[id^='booking-row-'][data-booking-id]")));
+        String bookingId = bookingRow.getAttribute("data-booking-id");
+
         driver.findElement(By.id("logout-button")).click();
         wait.until(ExpectedConditions.urlContains("logout"));
         login("aanya.mehta@nutrisync.local", "NutriSyncDemo!2026");
         driver.get(baseUrl() + "/staff/bookings");
-        wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(".table-wrap")));
-        assertThat(driver.getPageSource()).contains("Booking requests");
-        // Confirm only if this request is visible in the signed-in nutritionist's own queue.
-        // A request owned by another nutritionist must not appear here.
-        if (!driver.findElements(By.id("confirm-booking-" + bookingId)).isEmpty()) {
-            driver.findElement(By.id("confirm-booking-" + bookingId)).click();
-            wait.until(ExpectedConditions.urlContains("/staff/bookings"));
-            assertThat(driver.getPageSource()).contains("Booking confirmed.");
-        } else {
-            assertThat(driver.getPageSource()).contains("Booking requests");
-            assertThat(driver.getPageSource()).doesNotContain("confirm-booking-" + bookingId);
-        }
+        WebElement confirmButton = wait.until(
+            ExpectedConditions.elementToBeClickable(By.id("confirm-booking-" + bookingId)));
+        confirmButton.click();
+        wait.until(ExpectedConditions.urlContains("/staff/bookings"));
+        assertThat(driver.getPageSource()).contains("Booking confirmed.");
     }
 
     @Test @Order(5)
