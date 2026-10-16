@@ -92,8 +92,12 @@ class SeleniumJourneysIT {
         wait.until(ExpectedConditions.urlContains("logout"));
         login("aanya.mehta@nutrisync.local", "NutriSyncDemo!2026");
         driver.get(baseUrl() + "/staff/bookings");
-        wait.until(ExpectedConditions.presenceOfElementLocated(By.id("confirm-booking-" + bookingId)));
-        driver.findElement(By.id("confirm-booking-" + bookingId)).click();
+        // Another Selenium journey may have claimed the first available slot just before
+        // this test. Locate the requested booking rather than assuming the slot/booking ID.
+        wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("[data-booking-id='" + bookingId + "']")));
+        WebElement confirmButton = driver.findElement(By.id("confirm-booking-" + bookingId));
+        wait.until(ExpectedConditions.elementToBeClickable(confirmButton));
+        confirmButton.click();
         wait.until(ExpectedConditions.urlContains("/staff/bookings"));
         assertThat(driver.getPageSource()).contains("Booking confirmed.");
     }
