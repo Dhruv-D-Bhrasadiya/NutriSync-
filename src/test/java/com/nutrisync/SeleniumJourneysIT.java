@@ -82,6 +82,7 @@ class SeleniumJourneysIT {
     }
 
     @Test @Order(4)
+    @org.junit.jupiter.api.parallel.Isolated
     void nutritionistCanConfirmTheBooking() {
         login("client@nutrisync.local", "NutriSyncDemo!2026");
         requestFirstAvailableSlot();
