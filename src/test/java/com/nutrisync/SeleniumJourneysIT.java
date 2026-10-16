@@ -95,7 +95,9 @@ class SeleniumJourneysIT {
             .orElseThrow(() -> new AssertionError("The nutritionist should have an open slot in the demo calendar."));
         String slotId = ownOpenSlot.getAttribute("data-slot-id");
 
-        driver.findElement(By.id("logout-button")).click();
+        WebElement firstLogout = wait.until(ExpectedConditions.elementToBeClickable(By.id("logout-button")));
+        firstLogout.click();
+        wait.until(d -> !d.getCurrentUrl().contains("/staff/slots/new"));
         wait.until(ExpectedConditions.urlContains("/slots"));
         login("client@nutrisync.local", "NutriSyncDemo!2026");
         wait.until(ExpectedConditions.elementToBeClickable(By.id("book-slot-" + slotId))).click();
@@ -104,8 +106,9 @@ class SeleniumJourneysIT {
             By.cssSelector("[id^='booking-row-'][data-booking-id]")));
         String bookingId = bookingRow.getAttribute("data-booking-id");
 
-        driver.findElement(By.id("logout-button")).click();
-        wait.until(ExpectedConditions.urlContains("logout"));
+        WebElement secondLogout = wait.until(ExpectedConditions.elementToBeClickable(By.id("logout-button")));
+        secondLogout.click();
+        wait.until(d -> !d.getCurrentUrl().contains("/bookings"));
         login("aanya.mehta@nutrisync.local", "NutriSyncDemo!2026");
         driver.get(baseUrl() + "/staff/bookings");
         WebElement confirmButton = wait.until(
