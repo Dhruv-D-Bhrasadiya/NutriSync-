@@ -60,6 +60,38 @@ public class BookingService {
     }
 
     @Transactional(readOnly = true)
+    public List<Booking> allBookingsForAdmin(AppUser principal) {
+        AppUser staff = currentUser(principal);
+        requireAdmin(staff);
+        return bookings.findAllDetailedOrderByCreatedAtDesc();
+    }
+
+    @Transactional(readOnly = true)
+    public BookingMonitoringStats bookingMonitoringStats(AppUser principal) {
+        AppUser staff = currentUser(principal);
+        requireAdmin(staff);
+        return new BookingMonitoringStats(
+            bookings.count(),
+            bookings.countByStatus(BookingStatus.PENDING),
+            bookings.countByStatus(BookingStatus.CONFIRMED),
+            bookings.countByStatus(BookingStatus.REJECTED),
+            bookings.countByStatus(BookingStatus.CANCELLED),
+            bookings.countByStatus(BookingStatus.COMPLETED),
+            users.countByRole(Role.CLIENT),
+            users.countByRole(Role.NUTRITIONIST),
+            users.countByRole(Role.ADMIN),
+            users.count()
+        );
+    }
+
+    @Transactional(readOnly = true)
+    public List<AppUser> recentUsersForAdmin(AppUser principal) {
+        AppUser staff = currentUser(principal);
+        requireAdmin(staff);
+        return users.findAllByOrderByCreatedAtDesc();
+    }
+
+    @Transactional(readOnly = true)
     public Booking bookingForViewer(AppUser principal, Long bookingId) {
         AppUser viewer = currentUser(principal);
         Booking booking = bookings.findDetailedById(bookingId)
@@ -136,4 +168,13 @@ public class BookingService {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Staff access required.");
         }
     }
+
+    private void requireAdmin(AppUser user) {
+        if (user.getRole() != Role.ADMIN) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Administrator access required.");
+        }
+    }
+
+    public record BookingMonitoringStats(long total, long pending, long confirmed, long rejected, long cancelled,
+                                         long completed, long clients, long nutritionists, long administrators, long users) {}
 }
