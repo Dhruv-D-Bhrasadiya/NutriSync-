@@ -1,12 +1,14 @@
 <!doctype html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Booking requests · NutriSync</title><link rel="stylesheet" th:href="@{/css/app.css}"></head>
-<body><header class="topbar"><a class="brand" th:href="@{/slots}">NutriSync</a><nav class="nav"><a th:href="@{/slots}">Public availability</a><a th:href="@{/staff/slots/new}">Manage slots</a><form th:action="@{/logout}" method="post"><button class="secondary" type="submit">Sign out</button></form></nav></header>
-<main><section class="hero"><h1>Pending requests</h1><p>Review client requests for slots assigned to your account. Confirm or reject each pending booking.</p></section>
+<body><header class="topbar"><a class="brand" th:href="@{/slots}">NutriSync <span class="role-label">Nutritionist</span></a><nav class="nav" aria-label="Primary navigation">
+<a th:href="@{/slots}" th:classappend="${currentPath == '/slots' ? 'active' : ''}">Availability</a><a th:href="@{/staff/slots/new}" th:classappend="${currentPath.startsWith('/staff/slots') ? 'active' : ''}">My availability</a><a th:href="@{/staff/bookings}" class="active" aria-current="page">Booking requests</a>
+<form th:action="@{/logout}" method="post"><button class="secondary" type="submit">Sign out</button></form></nav></header>
+<main><section class="hero"><h1>Booking requests</h1><p>Review pending requests for your own consultation slots. Confirm or reject each request; you cannot decide on another nutritionist's bookings.</p></section>
 <div th:if="${success}" class="alert success" th:text="${success}"></div><div th:if="${error}" class="alert error" th:text="${error}"></div>
 <div th:if="${#lists.isEmpty(bookings)}" class="card empty">No pending requests right now.</div>
-<div class="table-wrap" th:unless="${#lists.isEmpty(bookings)}"><table><thead><tr><th>Booking</th><th>Client</th><th>Consultation</th><th>Action</th></tr></thead><tbody>
+<div class="table-wrap" th:unless="${#lists.isEmpty(bookings)}"><table><thead><tr><th>Booking</th><th>Client</th><th>Consultation</th><th>Status</th><th>Action</th></tr></thead><tbody>
 <tr th:each="booking : ${bookings}" th:attr="data-booking-id=${booking.id}" th:id="'booking-row-' + ${booking.id}">
-<td th:text="'#' + ${booking.id}">#1</td><td th:text="${booking.clientName}">Client</td><td><strong th:text="${booking.startsAt}">Start</strong><br><small th:text="'Ends ' + ${booking.endsAt}">End</small></td>
+<td th:text="'#' + ${booking.id}">#1</td><td th:text="${booking.clientName}">Client</td><td><strong th:text="${booking.startsAt}">Start</strong><br><small class="muted" th:text="'Ends ' + ${booking.endsAt}">End</small></td><td><span class="badge" th:classappend="${booking.status}" th:text="${booking.status}">PENDING</span></td>
 <td><div class="actions"><form th:action="@{/staff/bookings/{id}/confirm(id=${booking.id})}" method="post"><button th:id="'confirm-booking-' + ${booking.id}" type="submit">Confirm</button></form><form th:action="@{/staff/bookings/{id}/reject(id=${booking.id})}" method="post"><button class="danger" th:id="'reject-booking-' + ${booking.id}" type="submit">Reject</button></form></div></td>
-</tr></tbody></table></div></main><footer>NutriSync · Staff console</footer></body></html>
+</tr></tbody></table></div></main><footer>NutriSync · Nutritionist workspace</footer></body></html>
