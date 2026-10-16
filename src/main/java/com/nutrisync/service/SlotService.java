@@ -52,13 +52,10 @@ public class SlotService {
     }
 
     @Transactional
-    public AvailabilitySlot createSlot(AppUser actor, Instant start, Instant end) {
-        AppUser account = currentUser(actor);
-        if (account.getRole() != Role.NUTRITIONIST && account.getRole() != Role.ADMIN) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Only nutritionists or administrators can manage availability.");
-        }
-        if (account.getRole() == Role.ADMIN) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Administrators monitor availability; only nutritionists publish consultation slots.");
+    public AvailabilitySlot createSlot(AppUser principal, Instant start, Instant end) {
+        AppUser actor = currentUser(principal);
+        if (actor.getRole() != Role.NUTRITIONIST) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Only nutritionist accounts can publish availability.");
         }
         if (start == null || end == null || !start.isAfter(Instant.now()) || !end.isAfter(start)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Choose a future start time and an end time after the start.");
@@ -66,9 +63,7 @@ public class SlotService {
         if (end.isAfter(start.plusSeconds(4 * 60 * 60))) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "A consultation slot cannot exceed four hours.");
         }
-        // Lock the owning user row so concurrent slot-creation transactions serialize
-        // before checking for overlapping intervals.
-        AppUser owner = users.findLockedById(account.getId())
+        AppUser owner = users.findLockedById(actor.getId())
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Nutritionist account not found."));
         if (owner.getRole() != Role.NUTRITIONIST) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Only nutritionist accounts can publish availability.");
