@@ -16,7 +16,7 @@ This checklist distinguishes committed implementation from work that must still 
 ## Task 3 — requirements, architecture and local setup
 - [x] SRS summary, architecture, data model, API contract and diagrams committed.
 - [x] Application health and the app/PostgreSQL stack verified by the successful CI run.
-- Evidence: [CI run](https://github.com/Dhruv-D-Bhrasadiya/NutriSync-/actions/runs/38679031958)
+- Evidence: [Latest successful CI run](https://github.com/Dhruv-D-Bhrasadiya/NutriSync-/actions/runs/38897162858)
 
 ## Task 4 — GitHub repository setup
 - [x] README, .gitignore, issue templates, PR template and branch policy committed.
@@ -53,10 +53,11 @@ This checklist distinguishes committed implementation from work that must still 
 
 ## Task 9 — Selenium test design and local/CI execution
 - [x] Five browser journeys with assertions and synthetic data isolation implemented.
-- [x] The Selenium suite passed in the linked CI run.
-- [x] CI artifact upload is configured and a downloadable report artifact was verified on the latest completed green main run: [run #38720370095](https://github.com/Dhruv-D-Bhrasadiya/NutriSync-/actions/runs/38720370095) (artifact ID `11964588451`, expires 2026-10-29).
+- [x] Five Selenium journeys passed in the latest CI run on SHA `3a64657033d1665784bc101f6dc6e56b544f2165`.
+- [x] Maven unit/integration tests, Compose validation and Docker image build passed in the same run.
+- [x] CI artifact upload succeeded: [run #38897162858](https://github.com/Dhruv-D-Bhrasadiya/NutriSync-/actions/runs/38897162858), artifact ID `12044670789`, SHA-256 `72f19559db5442177ede9a6996929a9b9f767fa7282e5998fee8577cefbb5d6c`, expires 2026-10-30.
 - [ ] Save a local test report/screenshot set for the assignment submission.
-- Evidence: [Latest successful main CI run](https://github.com/Dhruv-D-Bhrasadiya/NutriSync-/actions/runs/38706341153)
+- Evidence: [Latest successful main CI run](https://github.com/Dhruv-D-Bhrasadiya/NutriSync-/actions/runs/38897162858)
 
 ## Task 10 — continuous testing in Jenkins
 - [x] Jenkinsfile places Selenium verification before deployment, so failed tests cannot reach the deploy stage.
@@ -70,7 +71,7 @@ This checklist distinguishes committed implementation from work that must still 
 - [ ] Record a versioned release image ID/digest and inspect output.
 - [ ] Demonstrate logs, inspect, port mapping, restart, stop/start and removal commands.
 - [ ] Explicitly verify persistent database records survive application-container replacement.
-- Evidence: [Successful CI run](https://github.com/Dhruv-D-Bhrasadiya/NutriSync-/actions/runs/38679031958)
+- Evidence: [Successful CI run](https://github.com/Dhruv-D-Bhrasadiya/NutriSync-/actions/runs/38897162858)
 
 ## Task 12 — Jenkins-to-Docker continuous deployment
 - [x] Jenkinsfile contains versioned image tagging, optional registry push and a gated deployment path.
@@ -94,10 +95,16 @@ This checklist distinguishes committed implementation from work that must still 
 - Evidence: TBD
 - Guide: [Provisioning and rollback](14-provisioning-reliability-and-rollback.md)
 
+## Product backlog issue status
+- [x] [P06 — concurrent double-booking prevention (#8)](https://github.com/Dhruv-D-Bhrasadiya/NutriSync-/issues/8): concurrency test added and passed in CI.
+- [ ] [P13 — PostgreSQL persistence (#15)](https://github.com/Dhruv-D-Bhrasadiya/NutriSync-/issues/15): explicit data-survival-through-app-replacement smoke evidence remains.
+- [ ] [P15 — release artifact (#17)](https://github.com/Dhruv-D-Bhrasadiya/NutriSync-/issues/17): versioned release/image and release review evidence remain.
+- [ ] [Jenkins evidence (#29)](https://github.com/Dhruv-D-Bhrasadiya/NutriSync-/issues/29), [Ansible host evidence (#30)](https://github.com/Dhruv-D-Bhrasadiya/NutriSync-/issues/30), [user validation (#31)](https://github.com/Dhruv-D-Bhrasadiya/NutriSync-/issues/31), and [manual acceptance/release (#32)](https://github.com/Dhruv-D-Bhrasadiya/NutriSync-/issues/32) remain open because each requires real-world evidence.
+
 ## Final review
 - [x] README links point to the committed documentation and project files.
 - [x] No real credentials, private keys, .env files or health records were intentionally committed; fixed demo credentials are clearly restricted to local learning.
-- [x] Confirm latest main-branch CI is green and a test-report artifact is available: [run #38720370095](https://github.com/Dhruv-D-Bhrasadiya/NutriSync-/actions/runs/38720370095), artifact `11964588451`. This run passed on SHA `bcac6f1e4960635fd96c5187dc10e214a392dc7c`; subsequent evidence-only edits trigger a fresh CI run.
+- [x] Latest main-branch CI is green and a test-report artifact is available: [run #38897162858](https://github.com/Dhruv-D-Bhrasadiya/NutriSync-/actions/runs/38897162858), artifact `12044670789`. This run passed on SHA `3a64657033d1665784bc101f6dc6e56b544f2165`; this evidence-checklist update will trigger a fresh CI run.
 - [ ] Save final submission evidence and record the release tag after acceptance.
 
 Do not mark environment-dependent tasks complete until they have run. Keep logs/screenshots sanitized and follow the instructor's evidence-file requirements.
