@@ -25,4 +25,10 @@ public interface AvailabilitySlotRepository extends JpaRepository<AvailabilitySl
 
     @Query("select s from AvailabilitySlot s join fetch s.nutritionist where s.nutritionist.id = :nutritionistId order by s.startsAt asc")
     List<AvailabilitySlot> findAllForNutritionist(@Param("nutritionistId") Long nutritionistId);
+
+    @Query("select s from AvailabilitySlot s join fetch s.nutritionist order by s.startsAt desc")
+    List<AvailabilitySlot> findAllWithNutritionistOrderByStartsAtDesc();
+
+    long countByStatus(SlotStatus status);
+    long countByStartsAtAfter(Instant instant);
 }
