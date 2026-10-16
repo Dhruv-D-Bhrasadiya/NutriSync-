@@ -62,7 +62,7 @@ class BookingServiceIntegrationTest {
             .toList();
 
         try {
-            List<Future<?>> attempts = clients.stream().map(client -> pool.submit((Callable<Void>) () -> {
+            List<Future<?>> attempts = clients.stream().map(client -> pool.submit((Callable<Object>) () -> {
                 ready.countDown();
                 if (!start.await(10, TimeUnit.SECONDS)) {
                     throw new IllegalStateException("Concurrent test start timed out");
