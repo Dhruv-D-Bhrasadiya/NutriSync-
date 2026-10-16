@@ -27,18 +27,25 @@ public class DemoDataInitializer {
 
     @PostConstruct
     public void seedDemoData() {
-        AppUser nutritionist = users.createUserIfMissing("Demo Nutritionist", "nutritionist@nutrisync.local", "NutriSyncDemo!2026", Role.NUTRITIONIST);
+        AppUser nutritionistOne = users.createUserIfMissing("Dr. Aanya Mehta", "aanya.mehta@nutrisync.local", "NutriSyncDemo!2026", Role.NUTRITIONIST);
+        AppUser nutritionistTwo = users.createUserIfMissing("Dr. Rohan Kulkarni", "rohan.kulkarni@nutrisync.local", "NutriSyncDemo!2026", Role.NUTRITIONIST);
+        AppUser nutritionistThree = users.createUserIfMissing("Dr. Isha Desai", "isha.desai@nutrisync.local", "NutriSyncDemo!2026", Role.NUTRITIONIST);
         users.createUserIfMissing("Demo Client", "client@nutrisync.local", "NutriSyncDemo!2026", Role.CLIENT);
         users.createUserIfMissing("Demo Administrator", "admin@nutrisync.local", "NutriSyncAdmin!2026", Role.ADMIN);
-        if (slots.count() > 0) return;
+        // Seed a separate calendar for each named nutritionist, even if the local demo
+        // database already contains slots created by an older version of the seeder.
+        AppUser[] nutritionists = {nutritionistOne, nutritionistTwo, nutritionistThree};
         LocalDate firstDay = LocalDate.now(zone).plusDays(2);
-        for (int day = 0; day < 30; day++) {
-            LocalDate date = firstDay.plusDays(day);
-            if (date.getDayOfWeek() == DayOfWeek.SUNDAY) continue;
-            for (int hour = 10; hour <= 16; hour += 2) {
-                Instant start = ZonedDateTime.of(date, LocalTime.of(hour, 0), zone).toInstant();
-                Instant end = start.plus(Duration.ofMinutes(45));
-                slots.save(new AvailabilitySlot(nutritionist, start, end));
+        for (int person = 0; person < nutritionists.length; person++) {
+            if (!slots.findAllForNutritionist(nutritionists[person].getId()).isEmpty()) continue;
+            for (int day = 0; day < 30; day++) {
+                LocalDate date = firstDay.plusDays(day);
+                if (date.getDayOfWeek() == DayOfWeek.SUNDAY) continue;
+                for (int hour = 10; hour <= 16; hour += 2) {
+                    Instant start = ZonedDateTime.of(date, LocalTime.of(hour + (person % 2), 0), zone).toInstant();
+                    Instant end = start.plus(Duration.ofMinutes(45));
+                    slots.save(new AvailabilitySlot(nutritionists[person], start, end));
+                }
             }
         }
     }

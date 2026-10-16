@@ -1,14 +1,14 @@
 <!doctype html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Manage availability · NutriSync</title><link rel="stylesheet" th:href="@{/css/app.css}"></head>
-<body><header class="topbar"><a class="brand" th:href="@{/slots}">NutriSync</a><nav class="nav"><a th:href="@{/slots}">Public availability</a><a th:href="@{/staff/bookings}">Booking requests</a><form th:action="@{/logout}" method="post"><button class="secondary" type="submit">Sign out</button></form></nav></header>
-<main><section class="hero"><h1>Manage availability</h1><p>Create future consultation slots. Overlapping slots for the same staff account are rejected.</p></section>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>My availability · NutriSync</title><link rel="stylesheet" th:href="@{/css/app.css}"></head>
+<body><header class="topbar"><a class="brand" th:href="@{/slots}">NutriSync <span class="role-label">Nutritionist</span></a><nav class="nav" aria-label="Primary navigation">
+<a th:href="@{/slots}" th:classappend="${currentPath == '/slots' ? 'active' : ''}">Availability</a><a th:href="@{/staff/slots/new}" class="active" aria-current="page">My availability</a><a th:href="@{/staff/bookings}" th:classappend="${currentPath.startsWith('/staff/bookings') ? 'active' : ''}">Booking requests</a>
+<form th:action="@{/logout}" method="post"><button class="secondary" type="submit">Sign out</button></form></nav></header>
+<main><section class="hero"><h1>My availability</h1><p>Publish consultation times under your own account. Only you can manage these slots and decide requests assigned to them.</p></section>
 <div th:if="${success}" class="alert success" th:text="${success}"></div><div th:if="${error}" class="alert error" th:text="${error}"></div>
-<section class="card"><h2>Add a slot</h2><form th:action="@{/staff/slots}" method="post" id="create-slot-form" class="grid">
-<div class="field"><label for="startsAt">Start date and time</label><input id="startsAt" name="startsAt" type="datetime-local" required></div>
-<div class="field"><label for="endsAt">End date and time</label><input id="endsAt" name="endsAt" type="datetime-local" required></div>
-<div class="field" style="align-self:end"><button id="create-slot-submit" type="submit">Create availability</button></div>
-</form><p class="help">Times are interpreted in the configured application timezone.</p></section>
-<h2>Your slots</h2><div th:if="${#lists.isEmpty(slots)}" class="card empty">No slots have been created for this account.</div>
-<div class="table-wrap" th:unless="${#lists.isEmpty(slots)}"><table><thead><tr><th>Slot</th><th>Start</th><th>End</th><th>Status</th></tr></thead><tbody><tr th:each="slot : ${slots}"><td th:text="'#' + ${slot.id}">#1</td><td th:text="${slot.startsAt}">Start</td><td th:text="${slot.endsAt}">End</td><td><span class="badge" th:text="${slot.status}" th:classappend="${slot.status}">OPEN</span></td></tr></tbody></table></div>
-</main><footer>NutriSync · Staff console</footer></body></html>
+<section class="card"><h2>Publish a slot</h2><form th:action="@{/staff/slots}" method="post" id="create-slot-form" class="grid">
+<div class="field"><label for="startsAt">Start date and time</label><input id="startsAt" name="startsAt" type="datetime-local" required></div><div class="field"><label for="endsAt">End date and time</label><input id="endsAt" name="endsAt" type="datetime-local" required></div>
+<div class="field form-action"><button id="create-slot-submit" type="submit">Publish availability</button></div></form><p class="help">Times are interpreted in the configured application timezone. Overlapping slots are rejected.</p></section>
+<h2>Your slots</h2><div th:if="${#lists.isEmpty(slots)}" class="card empty">You have not published any slots yet.</div>
+<div class="table-wrap" th:unless="${#lists.isEmpty(slots)}"><table><thead><tr><th>Slot</th><th>Start</th><th>End</th><th>Status</th></tr></thead><tbody><tr th:each="slot : ${slots}" th:attr="data-slot-id=${slot.id}"><td th:text="'#' + ${slot.id}">#1</td><td th:text="${slot.startsAt}">Start</td><td th:text="${slot.endsAt}">End</td><td><span class="badge" th:text="${slot.status}" th:classappend="${slot.status}">OPEN</span></td></tr></tbody></table></div>
+</main><footer>NutriSync · Nutritionist workspace</footer></body></html>

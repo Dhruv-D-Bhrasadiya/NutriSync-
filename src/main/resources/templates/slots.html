@@ -1,30 +1,28 @@
 <!doctype html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Available slots · NutriSync</title><link rel="stylesheet" th:href="@{/css/app.css}"></head>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Availability · NutriSync</title><link rel="stylesheet" th:href="@{/css/app.css}"></head>
 <body>
-<header class="topbar"><a class="brand" th:href="@{/slots}">NutriSync</a><nav class="nav">
-<a th:href="@{/slots}">Availability</a><a sec:authorize="isAuthenticated()" th:href="@{/bookings}">My bookings</a>
-<a sec:authorize="hasAnyRole('NUTRITIONIST','ADMIN')" th:href="@{/staff/slots/new}">Manage slots</a>
-<a sec:authorize="hasAnyRole('NUTRITIONIST','ADMIN')" th:href="@{/staff/bookings}">Requests</a>
-<a sec:authorize="isAnonymous()" th:href="@{/login}">Sign in</a><a sec:authorize="isAnonymous()" th:href="@{/register}">Create account</a>
+<header class="topbar"><a class="brand" th:href="@{/slots}">NutriSync</a><nav class="nav" aria-label="Primary navigation">
+<a th:href="@{/slots}" th:classappend="${currentPath == '/slots' ? 'active' : ''}" th:attr="aria-current=${currentPath == '/slots' ? 'page' : null}">Availability</a>
+<a sec:authorize="hasRole('CLIENT')" th:href="@{/bookings}" th:classappend="${currentPath.startsWith('/bookings') ? 'active' : ''}" th:attr="aria-current=${currentPath.startsWith('/bookings') ? 'page' : null}">My bookings</a>
+<a sec:authorize="hasRole('NUTRITIONIST')" th:href="@{/staff/slots/new}" th:classappend="${currentPath.startsWith('/staff/slots') ? 'active' : ''}" th:attr="aria-current=${currentPath.startsWith('/staff/slots') ? 'page' : null}">My availability</a>
+<a sec:authorize="hasRole('NUTRITIONIST')" th:href="@{/staff/bookings}" th:classappend="${currentPath.startsWith('/staff/bookings') ? 'active' : ''}" th:attr="aria-current=${currentPath.startsWith('/staff/bookings') ? 'page' : null}">Booking requests</a>
+<a sec:authorize="hasRole('ADMIN')" th:href="@{/admin/monitoring}" th:classappend="${currentPath.startsWith('/admin') ? 'active' : ''}" th:attr="aria-current=${currentPath.startsWith('/admin') ? 'page' : null}">Monitoring</a>
+<a sec:authorize="isAnonymous()" th:href="@{/login}" th:classappend="${currentPath == '/login' ? 'active' : ''}">Sign in</a><a sec:authorize="isAnonymous()" th:href="@{/register}" th:classappend="${currentPath == '/register' ? 'active' : ''}">Create account</a>
 <form sec:authorize="isAuthenticated()" th:action="@{/logout}" method="post" class="logout-form"><button class="secondary" type="submit" id="logout-button">Sign out</button></form>
 </nav></header>
 <main>
 <section class="hero"><h1>Make time for better nutrition.</h1><p>Find an available consultation, request a time that works for you, and follow your booking from request to confirmation.</p></section>
-<div th:if="${param.logout}" class="alert success">You have signed out.</div>
-<div th:if="${success}" class="alert success" th:text="${success}"></div><div th:if="${error}" class="alert error" th:text="${error}"></div>
-<div class="actions" style="justify-content:space-between"><h2>Available consultations</h2><span class="muted" th:text="${#lists.size(slots)} + ' open slots'">Open slots</span></div>
+<div th:if="${param.logout}" class="alert success">You have signed out.</div><div th:if="${success}" class="alert success" th:text="${success}"></div><div th:if="${error}" class="alert error" th:text="${error}"></div>
+<div class="actions section-heading"><h2>Available consultations</h2><span class="muted" th:text="${#lists.size(slots)} + ' open slots'">Open slots</span></div>
 <div th:if="${#lists.isEmpty(slots)}" class="card empty">There are no future open slots right now. Please check again later.</div>
 <div class="grid" th:unless="${#lists.isEmpty(slots)}">
 <article class="card slot-card" th:each="slot : ${slots}" th:attr="data-slot-id=${slot.id}">
-<span class="badge" th:text="${slot.status}">OPEN</span><h3 th:text="${slot.startsAt}">Date and time</h3>
+<span class="badge" th:classappend="${slot.status}" th:text="${slot.status}">OPEN</span><h3 th:text="${slot.startsAt}">Date and time</h3>
 <p class="muted">Ends <span th:text="${slot.endsAt}">End</span></p><p>Nutritionist: <strong th:text="${slot.nutritionistName}">Nutritionist</strong></p>
 <div class="actions">
 <form sec:authorize="hasRole('CLIENT')" th:action="@{/bookings}" method="post"><input type="hidden" name="slotId" th:value="${slot.id}"><button th:id="'book-slot-' + ${slot.id}" type="submit">Request this slot</button></form>
-<a sec:authorize="isAnonymous()" class="button" th:href="@{/login}">Sign in to book</a>
-<span sec:authorize="hasAnyRole('NUTRITIONIST','ADMIN')" class="muted">Staff availability</span>
-</div></article>
-</div>
+<a sec:authorize="isAnonymous()" class="button" th:href="@{/login}">Sign in to book</a><span sec:authorize="hasAnyRole('NUTRITIONIST','ADMIN')" class="muted">Published availability</span>
+</div></article></div>
 <div class="alert" sec:authorize="isAnonymous()">Have an account? <a th:href="@{/login}">Sign in</a> to request a slot, or <a th:href="@{/register}">create one</a>.</div>
-</main><footer>NutriSync · Consultation scheduling MVP · Use demo accounts only</footer>
-</body></html>
+</main><footer>NutriSync · Consultation scheduling MVP</footer></body></html>

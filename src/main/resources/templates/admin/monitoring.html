@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Admin monitoring · NutriSync</title><link rel="stylesheet" th:href="@{/css/app.css}"></head>
+<body>
+<header class="topbar"><a class="brand" th:href="@{/admin/monitoring}">NutriSync <span class="role-label">Admin</span></a>
+<nav class="nav" aria-label="Primary navigation">
+<a th:href="@{/slots}" th:classappend="${currentPath == '/slots' ? 'active' : ''}">Availability</a>
+<a th:href="@{/admin/monitoring}" th:classappend="${currentPath.startsWith('/admin') ? 'active' : ''}" aria-current="page">Monitoring</a>
+<form th:action="@{/logout}" method="post"><button class="secondary" type="submit">Sign out</button></form>
+</nav></header>
+<main>
+<section class="hero"><p class="eyebrow">ADMINISTRATOR CONSOLE</p><h1>System monitoring</h1><p>Live overview of nutritionists, consultation availability, booking lifecycle and recent account activity.</p></section>
+<div th:if="${success}" class="alert success" th:text="${success}"></div><div th:if="${error}" class="alert error" th:text="${error}"></div>
+<h2>Availability overview</h2>
+<section class="stats-grid">
+<article class="stat-card"><span>Total slots</span><strong th:text="${slotStats.total}">0</strong><small>All nutritionists</small></article>
+<article class="stat-card stat-open"><span>Open</span><strong th:text="${slotStats.open}">0</strong><small>Available to request</small></article>
+<article class="stat-card stat-booked"><span>Booked</span><strong th:text="${slotStats.booked}">0</strong><small>Currently claimed</small></article>
+<article class="stat-card stat-unavailable"><span>Unavailable</span><strong th:text="${slotStats.unavailable}">0</strong><small>Blocked from booking</small></article>
+<article class="stat-card"><span>Future slots</span><strong th:text="${slotStats.future}">0</strong><small>Upcoming start times</small></article>
+</section>
+<h2>Booking health</h2>
+<section class="stats-grid">
+<article class="stat-card"><span>Total bookings</span><strong th:text="${bookingStats.total}">0</strong><small>All recorded requests</small></article>
+<article class="stat-card stat-pending"><span>Pending</span><strong th:text="${bookingStats.pending}">0</strong><small>Awaiting a decision</small></article>
+<article class="stat-card stat-confirmed"><span>Confirmed</span><strong th:text="${bookingStats.confirmed}">0</strong><small>Approved consultations</small></article>
+<article class="stat-card stat-rejected"><span>Rejected</span><strong th:text="${bookingStats.rejected}">0</strong><small>Declined requests</small></article>
+<article class="stat-card"><span>Cancelled</span><strong th:text="${bookingStats.cancelled}">0</strong><small>Cancelled bookings</small></article>
+<article class="stat-card"><span>Completed</span><strong th:text="${bookingStats.completed}">0</strong><small>Completed status</small></article>
+</section>
+<h2>Accounts</h2>
+<section class="stats-grid">
+<article class="stat-card"><span>All accounts</span><strong th:text="${bookingStats.users}">0</strong><small>Registered users</small></article>
+<article class="stat-card"><span>Clients</span><strong th:text="${bookingStats.clients}">0</strong><small>Booking customers</small></article>
+<article class="stat-card"><span>Nutritionists</span><strong th:text="${bookingStats.nutritionists}">0</strong><small>Availability owners</small></article>
+<article class="stat-card"><span>Administrators</span><strong th:text="${bookingStats.administrators}">0</strong><small>Monitoring access</small></article>
+</section>
+<section class="monitor-grid">
+<div><h2>Recent bookings</h2>
+<div th:if="${#lists.isEmpty(recentBookings)}" class="card empty">No bookings have been created yet.</div>
+<div class="table-wrap" th:unless="${#lists.isEmpty(recentBookings)}"><table><thead><tr><th>ID</th><th>Client</th><th>Nutritionist</th><th>Consultation</th><th>Status</th></tr></thead><tbody>
+<tr th:each="booking : ${recentBookings}"><td th:text="'#' + ${booking.id}">#1</td><td th:text="${booking.clientName}">Client</td><td th:text="${booking.nutritionistName}">Nutritionist</td><td th:text="${booking.startsAt}">Start</td><td><span class="badge" th:classappend="${booking.status}" th:text="${booking.status}">PENDING</span></td></tr>
+</tbody></table></div></div>
+<div><h2>New accounts</h2>
+<div th:if="${#lists.isEmpty(recentUsers)}" class="card empty">No accounts yet.</div>
+<div class="table-wrap" th:unless="${#lists.isEmpty(recentUsers)}"><table><thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Created</th></tr></thead><tbody>
+<tr th:each="account : ${recentUsers}"><td th:text="${account.name}">Name</td><td th:text="${account.email}">Email</td><td><span class="badge" th:classappend="${account.role}" th:text="${account.role}">CLIENT</span></td><td th:text="${account.createdAt}">Date</td></tr>
+</tbody></table></div></div>
+</section>
+<h2>Latest availability across all nutritionists</h2>
+<div th:if="${#lists.isEmpty(allSlots)}" class="card empty">No availability has been posted.</div>
+<div class="table-wrap" th:unless="${#lists.isEmpty(allSlots)}"><table><thead><tr><th>Slot</th><th>Nutritionist</th><th>Start</th><th>End</th><th>Status</th></tr></thead><tbody>
+<tr th:each="slot : ${allSlots}"><td th:text="'#' + ${slot.id}">#1</td><td th:text="${slot.nutritionistName}">Nutritionist</td><td th:text="${slot.startsAt}">Start</td><td th:text="${slot.endsAt}">End</td><td><span class="badge" th:classappend="${slot.status}" th:text="${slot.status}">OPEN</span></td></tr>
+</tbody></table></div>
+<p class="help">This page is read-only monitoring. Nutritionists own and publish their individual availability and decide bookings for their own slots.</p>
+</main><footer>NutriSync · Administrator monitoring</footer>
+</body></html>

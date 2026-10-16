@@ -54,9 +54,37 @@ class SlotServiceIntegrationTest {
         assertThat(exception.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
     }
 
+    @Test
+    void adminCannotPublishAvailabilityAsNutritionist() {
+        AppUser admin = createUser("Admin", Role.ADMIN);
+        Instant start = Instant.now().plusSeconds(3 * 24 * 60 * 60L);
+
+        ResponseStatusException exception = catchThrowableOfType(
+            () -> slotService.createSlot(admin, start, start.plusSeconds(45 * 60L)),
+            ResponseStatusException.class
+        );
+
+        assertThat(exception.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+    }
+
+    @Test
+    void nutritionistAccountsOwnSeparateAvailability() {
+        AppUser nutritionist = createUser("Nutritionist", Role.NUTRITIONIST);
+        AppUser anotherNutritionist = createUser("Another Nutritionist", Role.NUTRITIONIST);
+        Instant start = Instant.now().plusSeconds(3 * 24 * 60 * 60L);
+
+        AvailabilitySlot created = slotService.createSlot(nutritionist, start, start.plusSeconds(45 * 60L));
+
+        assertThat(created.getNutritionist().getId()).isEqualTo(nutritionist.getId());
+        assertThat(slotService.slotsForNutritionist(nutritionist.getId())).extracting(AvailabilitySlot::getId)
+            .contains(created.getId());
+        assertThat(slotService.slotsForNutritionist(anotherNutritionist.getId())).extracting(AvailabilitySlot::getId)
+            .doesNotContain(created.getId());
+    }
+
     private AppUser createUser(String label, Role role) {
         String suffix = UUID.randomUUID().toString().replace("-", "").substring(0, 12);
-        return users.save(new AppUser(label + " " + suffix, label.toLowerCase() + "-" + suffix + "@example.test",
+        return users.save(new AppUser(label + " " + suffix, label.toLowerCase().replace(" ", "-") + "-" + suffix + "@example.test",
             passwordEncoder.encode("TestPassword!0123456789"), role));
     }
 }

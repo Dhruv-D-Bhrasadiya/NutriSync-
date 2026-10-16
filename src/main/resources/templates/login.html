@@ -1,12 +1,8 @@
 <!doctype html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Sign in · NutriSync</title><link rel="stylesheet" th:href="@{/css/app.css}"></head>
-<body><header class="topbar"><a class="brand" th:href="@{/slots}">NutriSync</a><nav class="nav"><a th:href="@{/slots}">Availability</a><a th:href="@{/register}">Create account</a></nav></header>
-<main><section class="card form-card"><h1>Welcome back</h1><p class="muted">Sign in to manage your consultation bookings.</p>
+<body><header class="topbar"><a class="brand" th:href="@{/slots}">NutriSync</a><nav class="nav" aria-label="Primary navigation"><a th:href="@{/slots}" th:classappend="${currentPath == '/slots' ? 'active' : ''}">Availability</a><a th:href="@{/login}" class="active" aria-current="page">Sign in</a><a th:href="@{/register}">Create account</a></nav></header>
+<main><section class="card form-card"><h1>Welcome back</h1><p class="muted">Sign in to manage your consultation bookings or staff workspace.</p>
 <div th:if="${success}" class="alert success" th:text="${success}"></div><div th:if="${param.error}" class="alert error">Sign-in failed. Check your email and password.</div><div th:if="${param.logout}" class="alert success">You have signed out.</div>
-<form th:action="@{/login}" method="post" id="login-form">
-<div class="field"><label for="username">Email address</label><input id="username" name="username" type="email" autocomplete="username" required></div>
-<div class="field"><label for="password">Password</label><input id="password" name="password" type="password" autocomplete="current-password" required></div>
-<button type="submit" id="login-submit">Sign in</button>
-</form><p class="muted">Need an account? <a th:href="@{/register}">Register as a client</a>.</p>
-</section></main><footer>NutriSync · Demo scheduling app</footer></body></html>
+<form th:action="@{/login}" method="post" id="login-form"><div class="field"><label for="username">Email address</label><input id="username" name="username" type="email" autocomplete="username" required></div><div class="field"><label for="password">Password</label><input id="password" name="password" type="password" autocomplete="current-password" required></div><button type="submit" id="login-submit">Sign in</button></form>
+<p class="muted">New to NutriSync? <a th:href="@{/register}">Register as a client</a>.</p></section></main><footer>NutriSync · Consultation scheduling MVP</footer></body></html>

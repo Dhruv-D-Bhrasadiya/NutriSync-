@@ -22,6 +22,11 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     @Query("select b from Booking b join fetch b.client join fetch b.slot s join fetch s.nutritionist where b.id = :id")
     Optional<Booking> findDetailedById(@Param("id") Long id);
 
+    @Query("select b from Booking b join fetch b.client join fetch b.slot s join fetch s.nutritionist order by b.createdAt desc")
+    List<Booking> findAllDetailedOrderByCreatedAtDesc();
+
+    long countByStatus(BookingStatus status);
+
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("select b from Booking b where b.id = :id")
     Optional<Booking> findLockedById(@Param("id") Long id);

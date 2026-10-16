@@ -34,13 +34,17 @@ public class PageController {
         this.zone = ZoneId.of(timeZone);
     }
 
+    @ModelAttribute("currentPath")
+    public String currentPath(jakarta.servlet.http.HttpServletRequest request) {
+        return request.getRequestURI();
+    }
+
     @GetMapping("/")
     public String root() { return "redirect:/slots"; }
 
     @GetMapping("/slots")
     public String availableSlots(Model model) {
-        List<SlotView> views = slots.availableSlots().stream().map(this::slotView).toList();
-        model.addAttribute("slots", views);
+        model.addAttribute("slots", slots.availableSlots().stream().map(this::slotView).toList());
         return "slots";
     }
 
@@ -65,12 +69,10 @@ public class PageController {
 
     @GetMapping("/bookings")
     public String myBookings(@AuthenticationPrincipal AppUser actor, Model model) {
-        try {
-            model.addAttribute("bookings", bookings.myBookings(actor).stream().map(this::bookingView).toList());
-        } catch (ResponseStatusException exception) {
-            model.addAttribute("error", exception.getReason());
-            model.addAttribute("bookings", List.of());
+        if (actor.getRole() != Role.CLIENT) {
+            return actor.getRole() == Role.ADMIN ? "redirect:/admin/monitoring" : "redirect:/staff/bookings";
         }
+        model.addAttribute("bookings", bookings.myBookings(actor).stream().map(this::bookingView).toList());
         return "bookings";
     }
 
@@ -96,11 +98,12 @@ public class PageController {
         } catch (ResponseStatusException exception) {
             redirect.addFlashAttribute("error", exception.getReason());
         }
-        return "redirect:/bookings";
+        return actor.getRole() == Role.ADMIN ? "redirect:/admin/monitoring" : "redirect:/bookings";
     }
 
     @GetMapping("/staff/slots/new")
     public String staffSlots(@AuthenticationPrincipal AppUser actor, Model model) {
+        if (actor.getRole() == Role.ADMIN) return "redirect:/admin/monitoring";
         model.addAttribute("slots", slots.slotsForNutritionist(actor.getId()).stream().map(this::slotView).toList());
         return "staff/slots";
     }
@@ -121,8 +124,19 @@ public class PageController {
 
     @GetMapping("/staff/bookings")
     public String staffBookings(@AuthenticationPrincipal AppUser actor, Model model) {
+        if (actor.getRole() == Role.ADMIN) return "redirect:/admin/monitoring";
         model.addAttribute("bookings", bookings.pendingForStaff(actor).stream().map(this::bookingView).toList());
         return "staff/bookings";
+    }
+
+    @GetMapping("/admin/monitoring")
+    public String adminMonitoring(@AuthenticationPrincipal AppUser actor, Model model) {
+        model.addAttribute("slotStats", slots.monitoringStats(actor));
+        model.addAttribute("bookingStats", bookings.bookingMonitoringStats(actor));
+        model.addAttribute("recentBookings", bookings.allBookingsForAdmin(actor).stream().limit(12).map(this::bookingView).toList());
+        model.addAttribute("recentUsers", bookings.recentUsersForAdmin(actor).stream().limit(8).toList());
+        model.addAttribute("allSlots", slots.allSlotsForAdmin(actor).stream().limit(20).map(this::slotView).toList());
+        return "admin/monitoring";
     }
 
     @PostMapping("/staff/bookings/{bookingId}/confirm")
@@ -144,7 +158,7 @@ public class PageController {
         } catch (ResponseStatusException exception) {
             redirect.addFlashAttribute("error", exception.getReason());
         }
-        return "redirect:/staff/bookings";
+        return actor.getRole() == Role.ADMIN ? "redirect:/admin/monitoring" : "redirect:/staff/bookings";
     }
 
     private SlotView slotView(AvailabilitySlot slot) {

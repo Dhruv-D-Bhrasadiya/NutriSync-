@@ -82,18 +82,36 @@ class SeleniumJourneysIT {
     }
 
     @Test @Order(4)
-    void nutritionistCanConfirmTheBooking() {
+    void nutritionistCanConfirmTheBooking() throws Exception {
+        // A nutritionist may see and decide only requests for the slots they own.
+        // Sign in as the owner, locate one open slot, and publish no cross-account data.
+        login("aanya.mehta@nutrisync.local", "NutriSyncDemo!2026");
+        driver.get(baseUrl() + "/staff/slots/new");
+        wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector("tr[data-slot-id]")));
+        WebElement ownOpenSlot = driver.findElements(By.cssSelector("tr[data-slot-id]")).stream()
+            .filter(slotRow -> slotRow.getText().contains("OPEN"))
+            .findFirst()
+            .orElseThrow(() -> new AssertionError("Expected an open slot in this nutritionist's calendar."));
+        String slotId = ownOpenSlot.getAttribute("data-slot-id");
+
+        // Use separate browser sessions for separate users so logout/cookie redirects
+        // cannot leave the test on a login page unexpectedly.
+        driver.quit();
+        createBrowser();
         login("client@nutrisync.local", "NutriSyncDemo!2026");
-        requestFirstAvailableSlot();
-        WebElement row = wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("[id^='booking-row-']")));
-        String bookingId = row.getAttribute("data-booking-id");
-        driver.findElement(By.id("logout-button")).click();
-        // Wait for the logout POST and redirect to complete before starting a fresh login.
-        wait.until(ExpectedConditions.urlContains("logout"));
-        login("nutritionist@nutrisync.local", "NutriSyncDemo!2026");
+        wait.until(ExpectedConditions.elementToBeClickable(By.id("book-slot-" + slotId))).click();
+        wait.until(ExpectedConditions.urlContains("/bookings"));
+        WebElement bookingRow = wait.until(ExpectedConditions.presenceOfElementLocated(
+            By.cssSelector("[id^='booking-row-'][data-booking-id]")));
+        String bookingId = bookingRow.getAttribute("data-booking-id");
+
+        driver.quit();
+        createBrowser();
+        login("aanya.mehta@nutrisync.local", "NutriSyncDemo!2026");
         driver.get(baseUrl() + "/staff/bookings");
-        wait.until(ExpectedConditions.presenceOfElementLocated(By.id("confirm-booking-" + bookingId)));
-        driver.findElement(By.id("confirm-booking-" + bookingId)).click();
+        WebElement confirmButton = wait.until(
+            ExpectedConditions.elementToBeClickable(By.id("confirm-booking-" + bookingId)));
+        confirmButton.click();
         wait.until(ExpectedConditions.urlContains("/staff/bookings"));
         assertThat(driver.getPageSource()).contains("Booking confirmed.");
     }
