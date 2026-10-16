@@ -44,7 +44,7 @@
 <div><h2>New accounts</h2>
 <div th:if="${#lists.isEmpty(recentUsers)}" class="card empty">No accounts yet.</div>
 <div class="table-wrap" th:unless="${#lists.isEmpty(recentUsers)}"><table><thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Created</th></tr></thead><tbody>
-<tr th:each="account : ${recentUsers}"><td th:text="${account.name}">Name</td><td th:text="${account.email}">Email</td><td><span class="badge" th:classappend="${account.role}" th:text="${account.role}">CLIENT</span></td><td th:text="${#temporals.format(account.createdAt, 'dd MMM yyyy HH:mm')}">Date</td></tr>
+<tr th:each="account : ${recentUsers}"><td th:text="${account.name}">Name</td><td th:text="${account.email}">Email</td><td><span class="badge" th:classappend="${account.role}" th:text="${account.role}">CLIENT</span></td><td th:text="${account.createdAt}">Date</td></tr>
 </tbody></table></div></div>
 </section>
 <h2>Latest availability across all nutritionists</h2>
