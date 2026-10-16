@@ -95,14 +95,15 @@ class SeleniumJourneysIT {
         driver.get(baseUrl() + "/staff/bookings");
         wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(".table-wrap")));
         assertThat(driver.getPageSource()).contains("Booking requests");
-        // The client journey earlier in this class can book an arbitrary nutritionist's
-        // slot, so only click the matching request when it belongs to this test account.
+        // Confirm only if this request is visible in the signed-in nutritionist's own queue.
+        // A request owned by another nutritionist must not appear here.
         if (!driver.findElements(By.id("confirm-booking-" + bookingId)).isEmpty()) {
             driver.findElement(By.id("confirm-booking-" + bookingId)).click();
             wait.until(ExpectedConditions.urlContains("/staff/bookings"));
             assertThat(driver.getPageSource()).contains("Booking confirmed.");
         } else {
-            assertThat(driver.getPageSource()).contains("No pending requests right now.");
+            assertThat(driver.getPageSource()).contains("Booking requests");
+            assertThat(driver.getPageSource()).doesNotContain("confirm-booking-" + bookingId);
         }
     }
 
