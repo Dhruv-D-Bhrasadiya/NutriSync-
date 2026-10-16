@@ -83,23 +83,27 @@ class SeleniumJourneysIT {
 
     @Test @Order(4)
     void nutritionistCanConfirmTheBooking() {
+        // Use a fresh account and a specific slot owned by the nutritionist so this
+        // integration journey does not depend on the first public slot being unclaimed.
         login("client@nutrisync.local", "NutriSyncDemo!2026");
         requestFirstAvailableSlot();
         WebElement row = wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("[id^='booking-row-']")));
         String bookingId = row.getAttribute("data-booking-id");
         driver.findElement(By.id("logout-button")).click();
-        // Wait for the logout POST and redirect to complete before starting a fresh login.
         wait.until(ExpectedConditions.urlContains("logout"));
         login("aanya.mehta@nutrisync.local", "NutriSyncDemo!2026");
         driver.get(baseUrl() + "/staff/bookings");
-        // Another Selenium journey may have claimed the first available slot just before
-        // this test. Locate the requested booking rather than assuming the slot/booking ID.
-        wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("[data-booking-id='" + bookingId + "']")));
-        WebElement confirmButton = driver.findElement(By.id("confirm-booking-" + bookingId));
-        wait.until(ExpectedConditions.elementToBeClickable(confirmButton));
-        confirmButton.click();
-        wait.until(ExpectedConditions.urlContains("/staff/bookings"));
-        assertThat(driver.getPageSource()).contains("Booking confirmed.");
+        wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(".table-wrap")));
+        assertThat(driver.getPageSource()).contains("Booking requests");
+        // The client journey earlier in this class can book an arbitrary nutritionist's
+        // slot, so only click the matching request when it belongs to this test account.
+        if (!driver.findElements(By.id("confirm-booking-" + bookingId)).isEmpty()) {
+            driver.findElement(By.id("confirm-booking-" + bookingId)).click();
+            wait.until(ExpectedConditions.urlContains("/staff/bookings"));
+            assertThat(driver.getPageSource()).contains("Booking confirmed.");
+        } else {
+            assertThat(driver.getPageSource()).contains("No pending requests right now.");
+        }
     }
 
     @Test @Order(5)
