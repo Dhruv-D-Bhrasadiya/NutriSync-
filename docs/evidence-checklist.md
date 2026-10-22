@@ -41,7 +41,7 @@ This checklist distinguishes committed implementation from work that must still 
 - [ ] Install and secure a real Jenkins controller/agent.
 - [ ] Configure SCM and a webhook or polling trigger.
 - [ ] Capture a real Jenkins build log, test report and archived Maven artifact.
-- Environment check: at the start of this run, port 8080 served a Jenkins sign-in page and port 8082 had no listener. The local NutriSync smoke stack was subsequently bound to 8082; no Jenkins credentials or build access were available, so no Jenkins pipeline run is claimed.
+- Environment check on 2026-10-22: no Jenkins controller credentials or build access were available. The local NutriSync Compose stack was verified separately on `127.0.0.1:8080`; no Jenkins pipeline run is claimed.
 - Job/build URL: Not captured; Jenkins pipeline not run.
 - Guide: [Jenkins CI setup](07-jenkins-ci-setup.md)
 
@@ -69,7 +69,7 @@ This checklist distinguishes committed implementation from work that must still 
 - Guide: [Continuous testing](10-continuous-testing-in-jenkins.md)
 
 ## Task 11 — Docker image and container lifecycle
-- [x] Dockerfile builds successfully in CI; Compose stack starts and passes health checks.
+- [x] Dockerfile builds successfully in CI; on 2026-10-22 the college-network Dockerfile also built locally and the Compose app/PostgreSQL stack started with both services healthy.
 - [x] Built and inspected local versioned image `nutrisync-app:0.1.0`; image ID and local digest: `sha256:12a05cd6f2db3dc16ec91af41f888dbf257168250175dc9c1e75a1bac42a712c` (not pushed to a registry).
 - [ ] Demonstrate logs, inspect, port mapping, restart, stop/start and removal commands.
 - [x] Persistence smoke test on 2026-10-16: registered a synthetic `example.test` account and created a `PENDING` booking through the API, restarted only the app container, then confirmed the account and booking remained in PostgreSQL and the authenticated booking API still returned the record; app and database health were `UP`.
@@ -98,8 +98,8 @@ This checklist distinguishes committed implementation from work that must still 
 - Guide: [Provisioning and rollback](14-provisioning-reliability-and-rollback.md)
 
 ## Product backlog issue status
-- [x] [P06 — concurrent double-booking prevention (#8)](https://github.com/Dhruv-D-Bhrasadiya/NutriSync-/issues/8): concurrency test added and passed in CI.
-- [x] [P13 — PostgreSQL persistence (#15)](https://github.com/Dhruv-D-Bhrasadiya/NutriSync-/issues/15): account and booking survived application-container replacement in the local smoke test above; GitHub issue state still needs an authorized update.
+- [x] [P06 — concurrent double-booking prevention (#8)](https://github.com/Dhruv-D-Bhrasadiya/NutriSync-/issues/8): eight-client race test passed in CI; GitHub issue is closed.
+- [x] [P13 — PostgreSQL persistence (#15)](https://github.com/Dhruv-D-Bhrasadiya/NutriSync-/issues/15): account and booking survived application-container replacement in the local smoke test above; GitHub issue is closed.
 - [ ] [P15 — release artifact (#17)](https://github.com/Dhruv-D-Bhrasadiya/NutriSync-/issues/17): local versioned image is recorded, but registry publication and final release review/tag remain outstanding.
 - [ ] [Jenkins evidence (#29)](https://github.com/Dhruv-D-Bhrasadiya/NutriSync-/issues/29): real Jenkins pipeline, failure-gating exercise and archived evidence remain outstanding.
 - [ ] [Ansible host evidence (#30)](https://github.com/Dhruv-D-Bhrasadiya/NutriSync-/issues/30): no disposable Ubuntu host was available for provisioning/idempotency/rollback.
@@ -109,7 +109,8 @@ This checklist distinguishes committed implementation from work that must still 
 ## Final review
 - [x] README links point to the committed documentation and project files.
 - [x] No real credentials, private keys, .env files or health records were intentionally committed; fixed demo credentials are clearly restricted to local learning.
-- [x] Latest recorded main-branch CI is green and a test-report artifact is available: [run #38897162858](https://github.com/Dhruv-D-Bhrasadiya/NutriSync-/actions/runs/38897162858), artifact `12044670789`. This run passed on SHA `3a64657033d1665784bc101f6dc6e56b544f2165`. The local Maven verification above also passed; these unpushed documentation changes have not triggered CI.
+- [x] Latest recorded main-branch CI is green and a test-report artifact is available: [run #38897162858](https://github.com/Dhruv-D-Bhrasadiya/NutriSync-/actions/runs/38897162858), artifact `12044670789`. This run passed on SHA `3a64657033d1665784bc101f6dc6e56b544f2165`.
+- [x] Local Docker verification on 2026-10-22: `docker compose build app`, `docker compose up -d`, both services healthy, and `curl.exe -fsS http://127.0.0.1:8080/actuator/health` returned `{"status":"UP"}`.
 - [ ] Save final submission evidence and record the release tag after acceptance.
 
 Do not mark environment-dependent tasks complete until they have run. Keep logs/screenshots sanitized and follow the instructor's evidence-file requirements.
