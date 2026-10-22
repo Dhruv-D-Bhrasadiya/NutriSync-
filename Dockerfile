@@ -7,7 +7,11 @@ RUN mvn -B -DskipTests package
 
 FROM eclipse-temurin:17-jre-jammy
 ENV JAVA_OPTS="" SERVER_PORT=8080 SERVER_ADDRESS=0.0.0.0
-RUN apt-get update \
+RUN sed -i \
+        -e 's|http://archive.ubuntu.com/ubuntu|https://archive.ubuntu.com/ubuntu|g' \
+        -e 's|http://security.ubuntu.com/ubuntu|https://security.ubuntu.com/ubuntu|g' \
+        /etc/apt/sources.list \
+    && apt-get update \
     && apt-get install -y --no-install-recommends curl \
     && rm -rf /var/lib/apt/lists/* \
     && groupadd --system app \
